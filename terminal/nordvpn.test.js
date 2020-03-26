@@ -1,5 +1,5 @@
 const NordVpn = require('./nordvpn');
-const dummyNordVpn = require('./dummy.terminal');
+const dummyNordVpn = require('./dummy.nord.vpn');
 const { expect } = require('chai');
 
 describe('NordVPN', () => {
@@ -13,14 +13,11 @@ describe('NordVPN', () => {
   });
 
   it('returns status correctly', async () => {
-    dummyNordVpn.prepareStatus('Disconnected');
-
     const status = await nordvpn.getStatus();
 
     expect(status).to.equal(NordVpn.status.DISCONNECTED);
   });
 
   it('returns logged in status correctly', async () => {
-
   });
 });
