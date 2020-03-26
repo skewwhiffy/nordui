@@ -3,9 +3,9 @@ const { exec } = require('child_process');
 module.exports = class {
   execute(...args) {
     return new Promise(resolve => {
-      exec(args.join(' '), (err, stdout, stderr) => {
+      exec(args.filter(it => it).join(' '), (err, stdout, stderr) => {
         if (err) {
-          console.warn(error);
+          console.warn(err);
         }
         resolve(stdout? stdout.trim() : stderr);
       })
