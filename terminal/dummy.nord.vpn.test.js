@@ -2,7 +2,7 @@ const dummyNordVpn = require('./dummy.nord.vpn');
 const Terminal = require('./terminal');
 const { expect } = require('chai');
 
-describe.only('Dummy terminal', () => {
+describe('Dummy nordvpn', () => {
   const getLastLine = response => {
     const responseLines = response.split('\n');
     return responseLines[responseLines.length - 1];
@@ -13,6 +13,12 @@ describe.only('Dummy terminal', () => {
   beforeEach(async () => {
     await dummyNordVpn.clear();
   });
+
+  it('requires arguments', async () => {
+    const response = await terminal.execute(command);
+
+    expect(response).to.contain('Usage:');
+  })
 
   describe('login', () => {
     it('logs in with correct credentials', async () => {

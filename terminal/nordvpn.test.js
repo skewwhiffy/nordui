@@ -5,10 +5,9 @@ const { expect } = require('chai');
 describe('NordVPN', () => {
   let nordvpn;
 
-  beforeEach(() => {
-    const config = {
-      executable: dummyNordVpn.dummyNordVpn
-    };
+  beforeEach(async () => {
+    await dummyNordVpn.clear();
+    const config = { executable: dummyNordVpn.command };
     nordvpn = new NordVpn(config);
   });
 
