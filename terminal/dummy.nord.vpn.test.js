@@ -27,6 +27,12 @@ describe('Dummy nordvpn', () => {
       expect(getLastLine(response)).to.contain('can now connect');
     });
 
+    it('logs in with quotes around credentials', async () => {
+      const response = await terminal.execute(`${command} login -u '${username}' -p '${password}'`);
+
+      expect(getLastLine(response)).to.contain('can now connect');
+    })
+
     it('returns \'already logged in\' message', async () => {
       await terminal.execute(`${command} login -u ${username} -p ${password}`);
       const response = await terminal.execute(command, 'login -u poo -p pee');
@@ -60,6 +66,25 @@ describe('Dummy nordvpn', () => {
       expect(candidateStatusLines).to.have.length(1);
       expect(candidateStatusLines[0]).to.contain('Status:');
       expect(candidateStatusLines[0]).to.contain('Connected');
+    })
+  })
+
+  describe('geography', () => {
+    it('shows countries', async () => {
+      const response = await terminal.execute(`${command} countries`);
+
+      const countries = response
+        .split('\n')
+        .map(it => it.split(' '))
+        .reduce((a, c) => a.concat(c))
+        .filter(it => it)
+        .map(it => it.trim());
+      expect(countries).not.to.be.empty;
+      countries.forEach(it => {
+        expect(it).not.to.include(' ');
+        const firstLetter = it.substring(0, 1);
+        expect(firstLetter.toUpperCase()).to.equal(firstLetter);
+      });
     })
   })
 });

@@ -24,8 +24,12 @@ class Dummy {
       return await this.saveStatus();
     }
     if (args[0] === 'status') {
-      await this.status(args);
+      return await this.status(args);
     }
+    if (args[0] === 'countries') {
+      return await this.countries(args);
+    }
+    console.log(`Command \'${args[0]}\' doesn\'t exist`);
   }
 
   async saveStatus() {
@@ -38,6 +42,24 @@ class Dummy {
     }
     const statusJson = await readFile(statusFile, 'utf8');
     return JSON.parse(statusJson);
+  }
+
+  async countries() {
+    console.log('Albania                 Estonia                 Latvia                  Slovenia');
+    console.log('Argentina               Finland                 Luxembourg              South_Africa');
+    console.log('Australia               France                  Malaysia                South_Korea');
+    console.log('Austria                 Georgia                 Mexico                  Spain');
+    console.log('Belgium                 Germany                 Moldova                 Sweden');
+    console.log('Bosnia_And_Herzegovina  Greece                  Netherlands             Switzerland');
+    console.log('Brazil                  Hong_Kong               New_Zealand             Taiwan');
+    console.log('Bulgaria                Hungary                 North_Macedonia         Thailand');
+    console.log('Canada                  Iceland                 Norway                  Turkey');
+    console.log('Chile                   India                   Poland                  Ukraine');
+    console.log('Costa_Rica              Indonesia               Portugal                United_Kingdom');
+    console.log('Croatia                 Ireland                 Romania                 United_States');
+    console.log('Cyprus                  Israel                  Serbia                  Vietnam');
+    console.log('Czech_Republic          Italy                   Singapore');
+    console.log('Denmark                 Japan                   Slovakia');
   }
 
   async connect() {
