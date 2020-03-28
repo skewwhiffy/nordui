@@ -76,7 +76,9 @@ describe('NordVPN', () => {
 
   describe('countries', async () => {
     it('can get all countries', async () => {
-
+      const cities = require('all-the-cities');
+      const london = cities.filter(city => city.name.match('Kidderminster'));
+      console.log(london);
     })
   })
 });
