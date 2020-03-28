@@ -1,4 +1,5 @@
 const Terminal = require('./terminal');
+const countriesList = require('countries-list');
 
 module.exports = class {
   constructor({ executable }) {
@@ -12,6 +13,27 @@ module.exports = class {
   }
 
   async getCountries() {
+    const getCode = name => {
+      if (name.includes('_')) {
+        return getCode(name.replace('_', ' '));
+      }
+      const candidates = Object.keys(countriesList.countries)
+        .filter(it => countriesList.countries[it].name.toLowerCase() === name.toLowerCase());
+      if (candidates.length === 1) {
+        return candidates[0];
+      }
+      throw {
+        message: `I do not recognize the country '${name}'`,
+        name
+      }
+    }
+    const terminalResponse = await this.terminal.execute(`${this.executable} countries`);
+    return terminalResponse
+      .split('\n')
+      .map(it => it.split(' '))
+      .reduce((a, c) => a.concat(c))
+      .filter(it => it)
+      .map(it => getCode(it));;
     /*
 % nordvpn cities United_States
 A new version of NordVPN is available! Please update the application.
