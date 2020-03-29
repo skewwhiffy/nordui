@@ -9,6 +9,83 @@ const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const statusFile = path.join(__dirname, 'status.test.txt');
 
+const countryMap = {
+  "Albania": ["Tirana"],
+  "Argentina": ["Buenos_Aires"],
+  "Australia": ["Adelaide", "Brisbane", "Melbourne", "Perth", "Sydney"],
+  "Austria": ["Vienna"],
+  "Belgium": ["Brussels"],
+  "Bosnia_And_Herzegovina": ["Sarajevo"],
+  "Brazil": ["San_Paulo"],
+  "Bulgaria": ["Sofia"],
+  "Canada": ["Montreal", "Toronto", "Vancouver"],
+  "Chile": ["Santiago"],
+  "Costa_Rica": ["San_Jose"],
+  "Croatia": ["Zagreb"],
+  "Cyprus": ["Nicosia"],
+  "Czech_Republic": ["Prague"],
+  "Denmark": ["Copenhagen"],
+  "Estonia": ["Tallinn"],
+  "Finland": ["Helsinki"],
+  "France": ["Paris"],
+  "Georgia": ["Tbilisi"],
+  "Germany": ["Berlin", "Frankfurt"],
+  "Greece": ["Athens"],
+  "Hong_Kong": ["Hong_Kong"],
+  "Hungary": ["Budapest"],
+  "Iceland": ["Reykjavik"],
+  "India": ["Chennai", "Mumbai"],
+  "Indonesia": ["Jakarta"],
+  "Ireland": ["Dublin"],
+  "Israel": ["Tel_Aviv"],
+  "Italy": ["Milan"],
+  "Japan": ["Tokyo"],
+  "Latvia": ["Riga"],
+  "Luxembourg": ["Steinsel"],
+  "Malaysia": ["Kuala_Lumpur"],
+  "Mexico": ["Mexico"],
+  "Moldova": ["Chisinau"],
+  "Netherlands": ["Amsterdam"],
+  "New_Zealand": ["Auckland"],
+  "North_Macedonia": ["Skopje"],
+  "Norway": ["Oslo"],
+  "Poland": ["Warsaw"],
+  "Portugal": ["Lisbon"],
+  "Romania": ["Bucharest"],
+  "Serbia": ["Belgrad"],
+  "Singapore": ["Singapore"],
+  "Slovakia": ["Bratislava"],
+  "Slovenia": ["Ljubljana"],
+  "South_Africa": ["Johannesburg"],
+  "South_Korea": ["Seoul"],
+  "Spain": ["Madrid"],
+  "Sweden": ["Stockholm"],
+  "Switzerland": ["Zurich"],
+  "Taiwan": ["Taipei"],
+  "Thailand": ["Bangkok"],
+  "Turkey": ["Istanbul"],
+  "Ukraine": ["Kiev"],
+  "United_Kingdom": ["London"],
+  "United_States": [
+    "Atlanta",
+    "Buffalo",
+    "Charlotte",
+    "Chicago",
+    "Dallas",
+    "Denver",
+    "Los_Angeles",
+    "Manassas",
+    "Miami",
+    "New_York",
+    "Phoenix",
+    "Saint_Louis",
+    "Salt_Lake_City",
+    "San_Francisco",
+    "Seattle"
+  ],
+  "Vietnam": ["Hanoi"]
+};
+
 class Dummy {
   async exec(args) {
     this.dummyStatus = await this.getStatus();
@@ -29,6 +106,9 @@ class Dummy {
     if (args[0] === 'countries') {
       return await this.countries(args);
     }
+    if (args[0] === 'cities') {
+      return await this.cities(args);
+    }
     console.log(`Command \'${args[0]}\' doesn\'t exist`);
   }
 
@@ -45,21 +125,16 @@ class Dummy {
   }
 
   async countries() {
-    console.log('Albania                 Estonia                 Latvia                  Slovenia');
-    console.log('Argentina               Finland                 Luxembourg              South_Africa');
-    console.log('Australia               France                  Malaysia                South_Korea');
-    console.log('Austria                 Georgia                 Mexico                  Spain');
-    console.log('Belgium                 Germany                 Moldova                 Sweden');
-    console.log('Bosnia_And_Herzegovina  Greece                  Netherlands             Switzerland');
-    console.log('Brazil                  Hong_Kong               New_Zealand             Taiwan');
-    console.log('Bulgaria                Hungary                 North_Macedonia         Thailand');
-    console.log('Canada                  Iceland                 Norway                  Turkey');
-    console.log('Chile                   India                   Poland                  Ukraine');
-    console.log('Costa_Rica              Indonesia               Portugal                United_Kingdom');
-    console.log('Croatia                 Ireland                 Romania                 United_States');
-    console.log('Cyprus                  Israel                  Serbia                  Vietnam');
-    console.log('Czech_Republic          Italy                   Singapore');
-    console.log('Denmark                 Japan                   Slovakia');
+    console.log(Object.keys(countryMap).join(', '));
+  }
+
+  async cities() {
+    if (args.length !== 2) {
+      throw {
+        message: 'Need only a country name'
+      };
+    }
+    console.log(countryMap[args[1]].join(', '));
   }
 
   async connect() {

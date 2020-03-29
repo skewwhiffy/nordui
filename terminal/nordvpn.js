@@ -5,6 +5,23 @@ module.exports = class {
   constructor({ executable }) {
     this.executable = executable;
     this.terminal = new Terminal();
+    const nordCityMap = {
+      'Belgrad': 'Belgrade',
+      'Frankfurt': 'Frankfurt am Main',
+      'Kiev': 'Kyiv',
+      'Mexico': 'Mexico City',
+      'Montreal': 'Montréal',
+      'New York': 'New York City',
+      'Reykjavik': 'Reykjavík',
+      'San Jose': 'San José',
+      'San Paulo': 'São Paulo',
+      'Zurich': 'Zürich'
+    };
+    const spaceToDashes = source => source.split(' ').join('_');
+    this._nordCityMap = Object.keys(nordCityMap)
+      .reduce((a, c) => ({ ...a, [spaceToDashes(c)]: spaceToDashes(nordCityMap[c]) }), {});
+    this._geonameCityMap = Object.keys(this._nordCityMap)
+      .reduce((a, c) => ({ ...a, [this._nordCityMap[c]]: c }), {});
   }
 
   async login({ username, password }) {
@@ -12,54 +29,61 @@ module.exports = class {
     return terminalResponse.includes('Welcome');
   }
 
-  async getCountries() {
-    const getCode = name => {
-      if (name.includes('_')) {
-        return getCode(name.replace('_', ' '));
-      }
-      const candidates = Object.keys(countriesList.countries)
-        .filter(it => countriesList.countries[it].name.toLowerCase() === name.toLowerCase());
-      if (candidates.length === 1) {
-        return candidates[0];
-      }
-      throw {
-        message: `I do not recognize the country '${name}'`,
-        name
-      }
-    }
+  async _getCountriesRaw() {
     const terminalResponse = await this.terminal.execute(`${this.executable} countries`);
-    return terminalResponse
-      .split('\n')
+    const terminalLines = terminalResponse.split('\n');
+    return terminalLines[terminalLines.length - 1]
+      .split(' ')
       .map(it => it.split(' '))
       .reduce((a, c) => a.concat(c))
-      .filter(it => it)
-      .map(it => getCode(it));;
-    /*
-% nordvpn cities United_States
-A new version of NordVPN is available! Please update the application.
-Atlanta         Chicago         Los_Angeles     New_York        Salt_Lake_City
-Buffalo         Dallas          Manassas        Phoenix         San_Francisco
-Charlotte       Denver          Miami           Saint_Louis     Seattle
-(14:32:42) Linux:kenny-linux:nvim (c-q) [git::master|✚3]  (⎈ |BINARY-N/A:N/A)
-~/code/personal/nordui/terminal
-% nordvpn countries
-A new version of NordVPN is available! Please update the application.
-Albania                 Estonia                 Latvia                  Slovenia
-Argentina               Finland                 Luxembourg              South_Africa
-Australia               France                  Malaysia                South_Korea
-Austria                 Georgia                 Mexico                  Spain
-Belgium                 Germany                 Moldova                 Sweden
-Bosnia_And_Herzegovina  Greece                  Netherlands             Switzerland
-Brazil                  Hong_Kong               New_Zealand             Taiwan
-Bulgaria                Hungary                 North_Macedonia         Thailand
-Canada                  Iceland                 Norway                  Turkey
-Chile                   India                   Poland                  Ukraine
-Costa_Rica              Indonesia               Portugal                United_Kingdom
-Croatia                 Ireland                 Romania                 United_States
-Cyprus                  Israel                  Serbia                  Vietnam
-Czech_Republic          Italy                   Singapore
-Denmark                 Japan                   Slovakia
-    */
+      .map(it => it.replace(',', ''))
+      .map(it => it.trim())
+      .filter(it => it);
+  }
+
+  _getCode = name => {
+    if (name.includes('_')) {
+      return this._getCode(name.split('_').join(' '));
+    }
+    const candidates = Object.keys(countriesList.countries)
+      .filter(it => countriesList.countries[it].name.toLowerCase() === name.toLowerCase());
+    if (candidates.length === 1) {
+      return candidates[0];
+    }
+    throw {
+      message: `I do not recognize the country '${name}'`,
+      name
+    }
+  }
+
+  _nordCityToGeoname = nordCity => {
+    return this._nordCityMap[nordCity] || nordCity;
+  }
+
+  async getCities(country) {
+    const rawCountryCandidates = (await this._getCountriesRaw())
+      .filter(it => this._getCode(it) === country);
+    if (rawCountryCandidates.length !== 1) {
+      throw {
+        message: `Don't recognize country '${country}'`,
+        country
+      };
+    }
+    const rawCountry = rawCountryCandidates[0];
+    const terminalResponse = await this.terminal.execute(`${this.executable} cities ${rawCountry}`);
+    const terminalLines = terminalResponse.split('\n');
+    return terminalLines[terminalLines.length - 1]
+      .split(' ')
+      .map(it => it.split(' '))
+      .reduce((a, c) => a.concat(c))
+      .map(it => it.replace(',', ''))
+      .map(it => this._nordCityToGeoname(it))
+      .map(it => it.trim())
+      .filter(it => it);
+  }
+
+  async getCountries() {
+    return (await this._getCountriesRaw()).map(this._getCode);
   }
 
   async getConnectionStatus() {

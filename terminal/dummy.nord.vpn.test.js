@@ -70,21 +70,49 @@ describe('Dummy nordvpn', () => {
   })
 
   describe('geography', () => {
-    it('shows countries', async () => {
-      const response = await terminal.execute(`${command} countries`);
+    let countries;
 
-      const countries = response
-        .split('\n')
+    before(async () => {
+      const response = await terminal.execute(`${command} countries`);
+      const responseLines = response.split('\n');
+
+      countries = responseLines[responseLines.length - 1]
+        .split(',')
         .map(it => it.split(' '))
         .reduce((a, c) => a.concat(c))
+        .map(it => it.trim())
         .filter(it => it)
         .map(it => it.trim());
+    })
+
+    it('shows countries', () => {
       expect(countries).not.to.be.empty;
       countries.forEach(it => {
         expect(it).not.to.include(' ');
         const firstLetter = it.substring(0, 1);
         expect(firstLetter.toUpperCase()).to.equal(firstLetter);
       });
+    })
+
+    it('shows cities', async () => {
+      for (let i = 0; i < countries.length; i++) {
+        const country = countries[i];
+        const rawCities = await terminal.execute(`${command} cities ${country}`);
+        const rawCitiesLines = rawCities.split('\n');
+        const cities = rawCitiesLines[rawCitiesLines.length - 1]
+          .split(',')
+          .map(it => it.trim());
+        expect(cities).not.to.be.empty;
+        cities.forEach(it => {
+          expect(it).not.to.include(' ');
+          const firstLetter = it.substring(0, 1);
+          expect(firstLetter.toUpperCase()).to.equal(firstLetter);
+        });
+        if (cities.length > 2) {
+          // Don't bother checking all of them: there are far too many.
+          return;
+        }
+      }
     })
   })
 });

@@ -2,6 +2,7 @@ const NordVpn = require('./nordvpn');
 const Terminal = require('./terminal');
 const dummyNordVpn = require('./dummy.nord.vpn');
 const { expect } = require('chai');
+const allCities = require('all-the-cities');
 const { command, username, password } = dummyNordVpn;
 
 describe('NordVPN', () => {
@@ -74,15 +75,34 @@ describe('NordVPN', () => {
     })
   })
 
-  describe('countries', async () => {
+  describe('geography', async () => {
     it('can get all countries', async () => {
       const countries = await nordvpn.getCountries();
 
       expect(countries).to.include('GB');
-    })
+    });
 
-    it('can get all cities', async () => {
-
+    it.only('can get all cities', async () => {
+      const countries = (await nordvpn.getCountries())
+        .slice(0, 5); // Doing all of them takes a short time
+      const returnedCities = await Promise.all(countries
+        .map(async country => {
+          return {
+            cities: await nordvpn.getCities(country),
+            country
+          }})
+      );
+        
+      returnedCities.forEach(({country, cities}) => {
+        const citiesInCountry = allCities
+          .filter(it => it.country === country)
+          .map(it => it.name);
+        expect(cities).not.to.be.empty;
+        cities.forEach(city => {
+          expect(city[0].toUpperCase()).to.equal(city[0]);
+          expect(citiesInCountry).to.include(city.split('_').join(' '));
+        })
+      })
     })
   })
 });
