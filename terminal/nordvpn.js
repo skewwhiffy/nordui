@@ -60,6 +60,18 @@ module.exports = class {
     return this._nordCityMap[nordCity] || nordCity;
   }
 
+  async connect() {
+    const userStatus = await this.getUserStatus();
+    if (userStatus !== module.exports.status.user.LOGGEDIN) {
+      throw {
+        message: 'Not logged in, cannot connect'
+      };
+    }
+
+    const result = await this.terminal.execute(`${this.executable} connect`)
+    return true;
+  }
+
   async getCities(country) {
     const rawCountryCandidates = (await this._getCountriesRaw())
       .filter(it => this._getCode(it) === country);

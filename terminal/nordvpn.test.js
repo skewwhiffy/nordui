@@ -22,15 +22,6 @@ describe('NordVPN', () => {
 
       expect(status).to.equal(NordVpn.status.connection.DISCONNECTED);
     });
-
-    it('connected', async () => {
-      await terminal.execute(`${command} login -u ${username} -p ${password}`);
-      await terminal.execute(`${command} connect`);
-
-      const status = await nordvpn.getConnectionStatus();
-
-      expect(status).to.equal(NordVpn.status.connection.CONNECTED);
-    });
   })
 
   describe('user status', () => {
@@ -69,9 +60,35 @@ describe('NordVPN', () => {
     })
   });
 
-  describe('quick connect', () => {
-    it('can connect', async () => {
-      expect(await nordvpn.getConnectionStatus()).to.equal(NordVpn.status.connection.DISCONNECTED);
+  describe('connect', () => {
+    it('can connect without city', async () => {
+      await nordvpn.login({ username, password });
+
+      const result = await nordvpn.connect();
+
+      const status = await nordvpn.getConnectionStatus();
+      expect(result).to.be.true;
+      expect(status).to.equal(NordVpn.status.connection.CONNECTED);
+    });
+
+    it('can connect with city', async () => {
+      await nordvpn.login({ username, password });
+
+      const result = await nordvpn.connect('New_York_City');
+
+      const status = await nordvpn.getConnectionStatus();
+      expect(result).to.be.true;
+      expect(status).to.equal(NordVpn.status.connection.CONNECTED);
+    });
+
+    it('cannot connect with incorrect city', async () => {
+      await nordvpn.login({ username, password });
+
+      const result = await nordvpn.connect('New_York');
+
+      const status = await nordvpn.getConnectionStatus();
+      expect(result).to.be.false;
+      expect(status).to.equal(NordVpn.status.connection.DISCONNECTED);
     })
   })
 
@@ -82,7 +99,7 @@ describe('NordVPN', () => {
       expect(countries).to.include('GB');
     });
 
-    it.only('can get all cities', async () => {
+    it('can get all cities', async () => {
       const countries = (await nordvpn.getCountries())
         .slice(0, 5); // Doing all of them takes a short time
       const returnedCities = await Promise.all(countries

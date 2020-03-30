@@ -2,6 +2,7 @@
 const path = require('path');
 const fs = require('fs');
 const util = require('util');
+const countryList = require('countries-list');
 const dummyNordVpn = require('./dummy.nord.vpn');
 
 const exists = util.promisify(fs.exists);
@@ -137,15 +138,23 @@ class Dummy {
     console.log(countryMap[args[1]].join(', '));
   }
 
-  async connect() {
+  async connect(args) {
     if (!this.dummyStatus.loggedIn) {
-      throw {
-        message: 'TODO: Not logged in, not going to connect'
-      };
+      console.log('TODO: Not logged in, not going to connect');
+      // This is different behavious to the actual client, that now prompts for username and password.
+      return;
     }
-    this.dummyStatus.connected = true;
-    console.log('Connecting to United Kingdom #1474 (uk1474.nordvpn.com)');
-    console.log('You are connected to United Kingdom #1474 (uk1474.nordvpn.com)!');
+    const location = args.length >= 2 ? args[1] : 'gb'
+    const country = this._getCountry(location);
+    console.log('Country:', JSON.stringify(country))
+    if (country) {
+      this.dummyStatus.connected = true;
+      // The country codes and the Nord server prefixes don't fully match, but this is good enough for us.
+      console.log(`Connecting to ${country.name} #1474 (${country.code}1474.nordvpn.com)`);
+      console.log('You are connected to ${country.name} #1474 (${country.code}1474.nordvpn.com)!');
+      return;
+    }
+    console.log(`Whoops! We couldn\'t connect you to '${location}'. Please try again. If the problem persists, contact our customer support.`);
   }
 
   async status() {
@@ -223,6 +232,26 @@ For more detailed information, please check manual page.
 
 Our customer support works 24/7 so if you have any questions or issues, drop us a line at https://support.nordvpn.com/
 `);
+  }
+
+  _getCountry(location) {
+    const lowerCaseLocation = location.toLowerCase();
+    const candidates = Object.keys(countryMap)
+      .map(country => {
+        const countryCodeCandidates = Object.keys(countryList.countries)
+          .filter(it => countryList.countries[it].name.toLowerCase().split(' ').join('_') === country.toLowerCase());
+        if (countryCodeCandidates.length !== 1) {
+            console.log(`Do not recognize country '${country}'`)
+        }
+        const cities = countryMap[country].map(it => it.toLowerCase());
+        const countryCode = countryCodeCandidates[0].toLowerCase();
+        if ([ ...cities, country, countryCode ].includes(lowerCaseLocation)) {
+          return Object.assign({ code: countryCode }, countryList.countries[countryCodeCandidates[0]]);
+        }
+        return false;
+      })
+      .filter(it => it);
+    return candidates.length === 1 ? candidates[0] : false;
   }
 }
 

@@ -69,6 +69,59 @@ describe('Dummy nordvpn', () => {
     })
   })
 
+  describe('connect', () => {
+    it('connects without a city', async () => {
+      await terminal.execute(`${command} login -u ${username} -p ${password}`);
+
+      const response = await terminal.execute(`${command} connect`)
+
+      const responseLines = response.split('\n');
+      const lastLine = responseLines[responseLines.length - 1];
+      expect(lastLine).to.contain('are connected');
+    })
+
+    it('connects when city exists', async () => {
+      await terminal.execute(`${command} login -u ${username} -p ${password}`);
+
+      const response = await terminal.execute(`${command} connect new_york`)
+
+      const responseLines = response.split('\n');
+      const lastLine = responseLines[responseLines.length - 1];
+      expect(lastLine).to.contain('are connected');
+    })
+
+    it.only('connects by country', async () => {
+      await terminal.execute(`${command} login -u ${username} -p ${password}`);
+
+      const response = await terminal.execute(`${command} connect united_kingdom`)
+
+      const responseLines = response.split('\n');
+      const lastLine = responseLines[responseLines.length - 1];
+      expect(lastLine).to.contain('are connected');
+    })
+
+    it('connects by country code', async () => {
+      await terminal.execute(`${command} login -u ${username} -p ${password}`);
+
+      const response = await terminal.execute(`${command} connect gb`)
+
+      const responseLines = response.split('\n');
+      const lastLine = responseLines[responseLines.length - 1];
+      expect(lastLine).to.contain('are connected');
+
+    })
+
+    it('does not connect when city does not exist', async () => {
+      await terminal.execute(`${command} login -u ${username} -p ${password}`);
+
+      const response = await terminal.execute(`${command} connect not_a_city`)
+
+      const responseLines = response.split('\n');
+      const lastLine = responseLines[responseLines.length - 1];
+      expect(lastLine).to.contain('try again');
+    })
+  })
+
   describe('geography', () => {
     let countries;
 
