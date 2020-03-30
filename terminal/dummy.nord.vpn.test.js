@@ -90,7 +90,7 @@ describe('Dummy nordvpn', () => {
       expect(lastLine).to.contain('are connected');
     })
 
-    it.only('connects by country', async () => {
+    it('connects by country', async () => {
       await terminal.execute(`${command} login -u ${username} -p ${password}`);
 
       const response = await terminal.execute(`${command} connect united_kingdom`)

@@ -146,7 +146,6 @@ class Dummy {
     }
     const location = args.length >= 2 ? args[1] : 'gb'
     const country = this._getCountry(location);
-    console.log('Country:', JSON.stringify(country))
     if (country) {
       this.dummyStatus.connected = true;
       // The country codes and the Nord server prefixes don't fully match, but this is good enough for us.
@@ -245,7 +244,7 @@ Our customer support works 24/7 so if you have any questions or issues, drop us 
         }
         const cities = countryMap[country].map(it => it.toLowerCase());
         const countryCode = countryCodeCandidates[0].toLowerCase();
-        if ([ ...cities, country, countryCode ].includes(lowerCaseLocation)) {
+        if ([ ...cities, country.toLowerCase(), countryCode ].includes(lowerCaseLocation)) {
           return Object.assign({ code: countryCode }, countryList.countries[countryCodeCandidates[0]]);
         }
         return false;
