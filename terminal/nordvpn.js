@@ -60,7 +60,7 @@ module.exports = class {
     return this._nordCityMap[nordCity] || nordCity;
   }
 
-  async connect() {
+  async connect(location) {
     const userStatus = await this.getUserStatus();
     if (userStatus !== module.exports.status.user.LOGGEDIN) {
       throw {
@@ -68,8 +68,9 @@ module.exports = class {
       };
     }
 
-    const result = await this.terminal.execute(`${this.executable} connect`)
-    return true;
+    const nordLocation = this._geonameCityMap[location] || location || '';
+    const result = await this.terminal.execute(`${this.executable} connect ${nordLocation}`)
+    return result.includes('are connected');
   }
 
   async getCities(country) {

@@ -60,7 +60,7 @@ describe('NordVPN', () => {
     })
   });
 
-  describe('connect', () => {
+  describe.only('connect', () => {
     it('can connect without city', async () => {
       await nordvpn.login({ username, password });
 
@@ -81,10 +81,20 @@ describe('NordVPN', () => {
       expect(status).to.equal(NordVpn.status.connection.CONNECTED);
     });
 
+    it('can connect with country code', async () => {
+      await nordvpn.login({ username, password });
+
+      const result = await nordvpn.connect('US');
+
+      const status = await nordvpn.getConnectionStatus();
+      expect(result).to.be.true;
+      expect(status).to.equal(NordVpn.status.connection.CONNECTED);
+    })
+
     it('cannot connect with incorrect city', async () => {
       await nordvpn.login({ username, password });
 
-      const result = await nordvpn.connect('New_York');
+      const result = await nordvpn.connect('Not_A_City');
 
       const status = await nordvpn.getConnectionStatus();
       expect(result).to.be.false;
