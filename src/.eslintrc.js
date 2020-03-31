@@ -1,11 +1,12 @@
-// Main config
+// vue.js config
 module.exports = {
   env: {
-    browser: false,
+    browser: true,
     commonjs: true,
     mocha: true
   },
   extends: [
+    'plugin:vue/recommended',
     'plugin:mocha/recommended',
     'standard'
   ],
@@ -13,11 +14,12 @@ module.exports = {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
   },
-  parser: 'babel-eslint',
+  parser: 'vue-eslint-parser',
   parserOptions: {
     ecmaVersion: 2019
   },
   plugins: [
+    'vue',
     'mocha'
   ],
   rules: {
