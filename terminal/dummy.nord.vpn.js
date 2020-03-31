@@ -12,4 +12,4 @@ module.exports = {
       fs.unlinkSync(statusFile);
     }
   }
-}
+};
