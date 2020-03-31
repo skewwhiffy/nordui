@@ -5,86 +5,87 @@ const util = require('util');
 const countryList = require('countries-list');
 const dummyNordVpn = require('./dummy.nord.vpn');
 
+// TODO: fs.exists depecated
 const exists = util.promisify(fs.exists);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const statusFile = path.join(__dirname, 'status.test.txt');
 
 const countryMap = {
-  "Albania": ["Tirana"],
-  "Argentina": ["Buenos_Aires"],
-  "Australia": ["Adelaide", "Brisbane", "Melbourne", "Perth", "Sydney"],
-  "Austria": ["Vienna"],
-  "Belgium": ["Brussels"],
-  "Bosnia_And_Herzegovina": ["Sarajevo"],
-  "Brazil": ["San_Paulo"],
-  "Bulgaria": ["Sofia"],
-  "Canada": ["Montreal", "Toronto", "Vancouver"],
-  "Chile": ["Santiago"],
-  "Costa_Rica": ["San_Jose"],
-  "Croatia": ["Zagreb"],
-  "Cyprus": ["Nicosia"],
-  "Czech_Republic": ["Prague"],
-  "Denmark": ["Copenhagen"],
-  "Estonia": ["Tallinn"],
-  "Finland": ["Helsinki"],
-  "France": ["Paris"],
-  "Georgia": ["Tbilisi"],
-  "Germany": ["Berlin", "Frankfurt"],
-  "Greece": ["Athens"],
-  "Hong_Kong": ["Hong_Kong"],
-  "Hungary": ["Budapest"],
-  "Iceland": ["Reykjavik"],
-  "India": ["Chennai", "Mumbai"],
-  "Indonesia": ["Jakarta"],
-  "Ireland": ["Dublin"],
-  "Israel": ["Tel_Aviv"],
-  "Italy": ["Milan"],
-  "Japan": ["Tokyo"],
-  "Latvia": ["Riga"],
-  "Luxembourg": ["Steinsel"],
-  "Malaysia": ["Kuala_Lumpur"],
-  "Mexico": ["Mexico"],
-  "Moldova": ["Chisinau"],
-  "Netherlands": ["Amsterdam"],
-  "New_Zealand": ["Auckland"],
-  "North_Macedonia": ["Skopje"],
-  "Norway": ["Oslo"],
-  "Poland": ["Warsaw"],
-  "Portugal": ["Lisbon"],
-  "Romania": ["Bucharest"],
-  "Serbia": ["Belgrad"],
-  "Singapore": ["Singapore"],
-  "Slovakia": ["Bratislava"],
-  "Slovenia": ["Ljubljana"],
-  "South_Africa": ["Johannesburg"],
-  "South_Korea": ["Seoul"],
-  "Spain": ["Madrid"],
-  "Sweden": ["Stockholm"],
-  "Switzerland": ["Zurich"],
-  "Taiwan": ["Taipei"],
-  "Thailand": ["Bangkok"],
-  "Turkey": ["Istanbul"],
-  "Ukraine": ["Kiev"],
-  "United_Kingdom": ["London"],
-  "United_States": [
-    "Atlanta",
-    "Buffalo",
-    "Charlotte",
-    "Chicago",
-    "Dallas",
-    "Denver",
-    "Los_Angeles",
-    "Manassas",
-    "Miami",
-    "New_York",
-    "Phoenix",
-    "Saint_Louis",
-    "Salt_Lake_City",
-    "San_Francisco",
-    "Seattle"
+  Albania: [ 'Tirana' ],
+  Argentina: [ 'Buenos_Aires' ],
+  Australia: [ 'Adelaide', 'Brisbane', 'Melbourne', 'Perth', 'Sydney' ],
+  Austria: [ 'Vienna' ],
+  Belgium: [ 'Brussels' ],
+  Bosnia_And_Herzegovina: [ 'Sarajevo' ],
+  Brazil: [ 'San_Paulo' ],
+  Bulgaria: [ 'Sofia' ],
+  Canada: [ 'Montreal', 'Toronto', 'Vancouver' ],
+  Chile: [ 'Santiago' ],
+  Costa_Rica: [ 'San_Jose' ],
+  Croatia: [ 'Zagreb' ],
+  Cyprus: [ 'Nicosia' ],
+  Czech_Republic: [ 'Prague' ],
+  Denmark: [ 'Copenhagen' ],
+  Estonia: [ 'Tallinn' ],
+  Finland: [ 'Helsinki' ],
+  France: [ 'Paris' ],
+  Georgia: [ 'Tbilisi' ],
+  Germany: [ 'Berlin', 'Frankfurt' ],
+  Greece: [ 'Athens' ],
+  Hong_Kong: [ 'Hong_Kong' ],
+  Hungary: [ 'Budapest' ],
+  Iceland: [ 'Reykjavik' ],
+  India: [ 'Chennai', 'Mumbai' ],
+  Indonesia: [ 'Jakarta' ],
+  Ireland: [ 'Dublin' ],
+  Israel: [ 'Tel_Aviv' ],
+  Italy: [ 'Milan' ],
+  Japan: [ 'Tokyo' ],
+  Latvia: [ 'Riga' ],
+  Luxembourg: [ 'Steinsel' ],
+  Malaysia: [ 'Kuala_Lumpur' ],
+  Mexico: [ 'Mexico' ],
+  Moldova: [ 'Chisinau' ],
+  Netherlands: [ 'Amsterdam' ],
+  New_Zealand: [ 'Auckland' ],
+  North_Macedonia: [ 'Skopje' ],
+  Norway: [ 'Oslo' ],
+  Poland: [ 'Warsaw' ],
+  Portugal: [ 'Lisbon' ],
+  Romania: [ 'Bucharest' ],
+  Serbia: [ 'Belgrad' ],
+  Singapore: [ 'Singapore' ],
+  Slovakia: [ 'Bratislava' ],
+  Slovenia: [ 'Ljubljana' ],
+  South_Africa: [ 'Johannesburg' ],
+  South_Korea: [ 'Seoul' ],
+  Spain: [ 'Madrid' ],
+  Sweden: [ 'Stockholm' ],
+  Switzerland: [ 'Zurich' ],
+  Taiwan: [ 'Taipei' ],
+  Thailand: [ 'Bangkok' ],
+  Turkey: [ 'Istanbul' ],
+  Ukraine: [ 'Kiev' ],
+  United_Kingdom: [ 'London' ],
+  United_States: [
+    'Atlanta',
+    'Buffalo',
+    'Charlotte',
+    'Chicago',
+    'Dallas',
+    'Denver',
+    'Los_Angeles',
+    'Manassas',
+    'Miami',
+    'New_York',
+    'Phoenix',
+    'Saint_Louis',
+    'Salt_Lake_City',
+    'San_Francisco',
+    'Seattle'
   ],
-  "Vietnam": ["Hanoi"]
+  Vietnam: [ 'Hanoi' ]
 };
 
 class Dummy {
@@ -110,7 +111,7 @@ class Dummy {
     if (args[0] === 'cities') {
       return await this.cities(args);
     }
-    console.log(`Command \'${args[0]}\' doesn\'t exist`);
+    console.log(`Command '${args[0]}' doesn't exist`);
   }
 
   async saveStatus() {
@@ -131,9 +132,9 @@ class Dummy {
 
   async cities() {
     if (args.length !== 2) {
-      throw {
+      throw new Error({
         message: 'Need only a country name'
-      };
+      });
     }
     console.log(countryMap[args[1]].join(', '));
   }
@@ -144,16 +145,16 @@ class Dummy {
       // This is different behavious to the actual client, that now prompts for username and password.
       return;
     }
-    const location = args.length >= 2 ? args[1] : 'gb'
+    const location = args.length >= 2 ? args[1] : 'gb';
     const country = this._getCountry(location);
     if (country) {
       this.dummyStatus.connected = true;
       // The country codes and the Nord server prefixes don't fully match, but this is good enough for us.
       console.log(`Connecting to ${country.name} #1474 (${country.code}1474.nordvpn.com)`);
-      console.log('You are connected to ${country.name} #1474 (${country.code}1474.nordvpn.com)!');
+      console.log(`You are connected to ${country.name} #1474 (${country.code}1474.nordvpn.com)!`);
       return;
     }
-    console.log(`Whoops! We couldn\'t connect you to '${location}'. Please try again. If the problem persists, contact our customer support.`);
+    console.log(`Whoops! We couldn't connect you to '${location}'. Please try again. If the problem persists, contact our customer support.`);
   }
 
   async status() {
@@ -169,15 +170,15 @@ class Dummy {
       console.log('Uptime: 2 minutes 14 seconds');
       return;
     }
-    console.log('Status: Disconnected')
+    console.log('Status: Disconnected');
   }
 
   async login(args) {
     if (Array.isArray(args)) {
       if (args.length !== 5 || args[1] !== '-u' || args[3] !== '-p') {
-        throw {
+        throw new Error({
           message: 'Wrong args length: need -u <username> -p <password> ' + args
-        };
+        });
       }
       return await this.login({
         username: args[2],
@@ -195,7 +196,7 @@ class Dummy {
     }
     this.dummyStatus.loggedIn = true;
     console.log(this.dummyStatus);
-    console.log('Welcome to NordVPN! You can now connect to VPN by using \'nordvpn connect\'')
+    console.log('Welcome to NordVPN! You can now connect to VPN by using \'nordvpn connect\'');
   }
 
   async noargs() {
@@ -240,7 +241,7 @@ Our customer support works 24/7 so if you have any questions or issues, drop us 
         const countryCodeCandidates = Object.keys(countryList.countries)
           .filter(it => countryList.countries[it].name.toLowerCase().split(' ').join('_') === country.toLowerCase());
         if (countryCodeCandidates.length !== 1) {
-            console.log(`Do not recognize country '${country}'`)
+          console.log(`Do not recognize country '${country}'`);
         }
         const cities = countryMap[country].map(it => it.toLowerCase());
         const countryCode = countryCodeCandidates[0].toLowerCase();
