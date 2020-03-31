@@ -28,7 +28,9 @@ module.exports = {
       SwitchCase: 1
     } ],
     semi: [ 2, 'always' ],
-    'space-before-function-paren': [ 2, 'never' ]
+    'space-before-function-paren': [ 2, 'never' ],
+    'vue/html-self-closing': 0
+    'vue/max-attributes-per-line': 0
   },
   overrides: [ {
     files: [ '*.test.js' ],
