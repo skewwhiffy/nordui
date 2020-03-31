@@ -5,27 +5,27 @@ const { expect } = require('chai');
 const allCities = require('all-the-cities');
 const { command, username, password } = dummyNordVpn;
 
-describe('NordVPN', () => {
+describe('NordVPN', function() {
   let terminal;
   let nordvpn;
 
-  beforeEach(async () => {
+  beforeEach(async function() {
     await dummyNordVpn.clear();
     terminal = new Terminal();
     const config = { executable: command };
     nordvpn = new NordVpn(config);
   });
 
-  describe('connection status', () => {
-    it('disconnected', async () => {
+  describe('connection status', function() {
+    it('disconnected', async function() {
       const status = await nordvpn.getConnectionStatus();
 
       expect(status).to.equal(NordVpn.status.connection.DISCONNECTED);
     });
   });
 
-  describe('user status', () => {
-    it('logged in', async () => {
+  describe('user status', function() {
+    it('logged in', async function() {
       await terminal.execute(`${command} login -u ${username} -p ${password}`);
 
       const status = await nordvpn.getUserStatus();
@@ -33,15 +33,15 @@ describe('NordVPN', () => {
       expect(status).to.equal(NordVpn.status.user.LOGGEDIN);
     });
 
-    it('logged out', async () => {
+    it('logged out', async function() {
       const status = await nordvpn.getUserStatus();
 
       expect(status).to.equal(NordVpn.status.user.LOGGEDOUT);
     });
   });
 
-  describe('login', () => {
-    it('can login', async () => {
+  describe('login', function() {
+    it('can login', async function() {
       expect(await nordvpn.getUserStatus()).to.equal(NordVpn.status.user.LOGGEDOUT);
 
       const result = await nordvpn.login({ username, password });
@@ -50,7 +50,7 @@ describe('NordVPN', () => {
       expect(await nordvpn.getUserStatus()).to.equal(NordVpn.status.user.LOGGEDIN);
     });
 
-    it('cannot login with incorrect credentials', async () => {
+    it('cannot login with incorrect credentials', async function() {
       expect(await nordvpn.getUserStatus()).to.equal(NordVpn.status.user.LOGGEDOUT);
 
       const result = await nordvpn.login({ username: 'not_username', password: password + password });
@@ -60,8 +60,8 @@ describe('NordVPN', () => {
     });
   });
 
-  describe('connect', () => {
-    it('can connect without city', async () => {
+  describe('connect', function() {
+    it('can connect without city', async function() {
       await nordvpn.login({ username, password });
 
       const result = await nordvpn.connect();
@@ -71,7 +71,7 @@ describe('NordVPN', () => {
       expect(status).to.equal(NordVpn.status.connection.CONNECTED);
     });
 
-    it('can connect with city', async () => {
+    it('can connect with city', async function() {
       await nordvpn.login({ username, password });
 
       const result = await nordvpn.connect('New_York_City');
@@ -81,7 +81,7 @@ describe('NordVPN', () => {
       expect(status).to.equal(NordVpn.status.connection.CONNECTED);
     });
 
-    it('can connect with country code', async () => {
+    it('can connect with country code', async function() {
       await nordvpn.login({ username, password });
 
       const result = await nordvpn.connect('US');
@@ -91,7 +91,7 @@ describe('NordVPN', () => {
       expect(status).to.equal(NordVpn.status.connection.CONNECTED);
     });
 
-    it('cannot connect with incorrect city', async () => {
+    it('cannot connect with incorrect city', async function() {
       await nordvpn.login({ username, password });
 
       const result = await nordvpn.connect('Not_A_City');
@@ -102,14 +102,14 @@ describe('NordVPN', () => {
     });
   });
 
-  describe('geography', async () => {
-    it('can get all countries', async () => {
+  describe('geography', function() {
+    it('can get all countries', async function() {
       const countries = await nordvpn.getCountries();
 
       expect(countries).to.include('GB');
     });
 
-    it('can get all cities', async () => {
+    it('can get all cities', async function() {
       const countries = (await nordvpn.getCountries())
         .slice(0, 5); // Doing all of them takes a short time
       const returnedCities = await Promise.all(countries
@@ -121,7 +121,7 @@ describe('NordVPN', () => {
         })
       );
 
-      returnedCities.forEach(({country, cities}) => {
+      returnedCities.forEach(({ country, cities }) => {
         const citiesInCountry = allCities
           .filter(it => it.country === country)
           .map(it => it.name);

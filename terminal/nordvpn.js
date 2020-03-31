@@ -6,16 +6,16 @@ module.exports = class {
     this.executable = executable;
     this.terminal = new Terminal();
     const nordCityMap = {
-      'Belgrad': 'Belgrade',
-      'Frankfurt': 'Frankfurt am Main',
-      'Kiev': 'Kyiv',
-      'Mexico': 'Mexico City',
-      'Montreal': 'Montréal',
+      Belgrad: 'Belgrade',
+      Frankfurt: 'Frankfurt am Main',
+      Kiev: 'Kyiv',
+      Mexico: 'Mexico City',
+      Montreal: 'Montréal',
       'New York': 'New York City',
-      'Reykjavik': 'Reykjavík',
+      Reykjavik: 'Reykjavík',
       'San Jose': 'San José',
       'San Paulo': 'São Paulo',
-      'Zurich': 'Zürich'
+      Zurich: 'Zürich'
     };
     const spaceToDashes = source => source.split(' ').join('_');
     this._nordCityMap = Object.keys(nordCityMap)
@@ -50,26 +50,26 @@ module.exports = class {
     if (candidates.length === 1) {
       return candidates[0];
     }
-    throw {
+    throw new Error({
       message: `I do not recognize the country '${name}'`,
       name
-    }
+    });
   }
 
-  _nordCityToGeoname = nordCity => {
+  _nordCityToGeoname(nordCity) {
     return this._nordCityMap[nordCity] || nordCity;
   }
 
   async connect(location) {
     const userStatus = await this.getUserStatus();
     if (userStatus !== module.exports.status.user.LOGGEDIN) {
-      throw {
+      throw new Error({
         message: 'Not logged in, cannot connect'
-      };
+      });
     }
 
     const nordLocation = this._geonameCityMap[location] || location || '';
-    const result = await this.terminal.execute(`${this.executable} connect ${nordLocation}`)
+    const result = await this.terminal.execute(`${this.executable} connect ${nordLocation}`);
     return result.includes('are connected');
   }
 
@@ -77,10 +77,10 @@ module.exports = class {
     const rawCountryCandidates = (await this._getCountriesRaw())
       .filter(it => this._getCode(it) === country);
     if (rawCountryCandidates.length !== 1) {
-      throw {
+      throw new Error({
         message: `Don't recognize country '${country}'`,
         country
-      };
+      });
     }
     const rawCountry = rawCountryCandidates[0];
     const terminalResponse = await this.terminal.execute(`${this.executable} cities ${rawCountry}`);
@@ -104,11 +104,11 @@ module.exports = class {
     const candidateStatusLines = terminalResponse
       .split('\n')
       .filter(it => it.startsWith('Status:'));
-    if (candidateStatusLines.length != 1) {
-      throw {
+    if (candidateStatusLines.length !== 1) {
+      throw new Error({
         message: 'Could not determine status from response ' + terminalResponse,
         terminalResponse
-      }
+      });
     }
     const statusLine = candidateStatusLines[0];
     switch (statusLine.substring('Status:'.length).trim().toLowerCase()) {
@@ -117,10 +117,10 @@ module.exports = class {
       case 'connected':
         return module.exports.status.connection.CONNECTED;
       default:
-        throw {
+        throw new Error({
           message: 'Could not determine status from status line ' + statusLine,
           statusLine
-        }
+        });
     }
   }
 
@@ -132,12 +132,12 @@ module.exports = class {
     if (terminalResponse.includes('try again')) {
       return module.exports.status.user.LOGGEDOUT;
     }
-    throw {
+    throw new Error({
       message: 'Don\'t understand: ' + terminalResponse,
       terminalResponse
-    };
+    });
   }
-}
+};
 
 module.exports.status = {
   connection: {

@@ -2,7 +2,7 @@ const dummyNordVpn = require('./dummy.nord.vpn');
 const Terminal = require('./terminal');
 const { expect } = require('chai');
 
-describe('Dummy nordvpn', () => {
+describe('Dummy nordvpn', function() {
   const getLastLine = response => {
     const responseLines = response.split('\n');
     return responseLines[responseLines.length - 1];
@@ -10,52 +10,52 @@ describe('Dummy nordvpn', () => {
   const terminal = new Terminal();
   const { command, username, password } = dummyNordVpn;
 
-  beforeEach(async () => {
+  beforeEach(async function() {
     await dummyNordVpn.clear();
   });
 
-  it('requires arguments', async () => {
+  it('requires arguments', async function() {
     const response = await terminal.execute(command);
 
     expect(response).to.contain('Usage:');
-  })
+  });
 
-  describe('login', () => {
-    it('logs in with correct credentials', async () => {
+  describe('login', function() {
+    it('logs in with correct credentials', async function() {
       const response = await terminal.execute(`${command} login -u ${username} -p ${password}`);
 
       expect(getLastLine(response)).to.contain('can now connect');
     });
 
-    it('logs in with quotes around credentials', async () => {
+    it('logs in with quotes around credentials', async function() {
       const response = await terminal.execute(`${command} login -u '${username}' -p '${password}'`);
 
       expect(getLastLine(response)).to.contain('can now connect');
-    })
+    });
 
-    it('returns \'already logged in\' message', async () => {
+    it('returns \'already logged in\' message', async function() {
       await terminal.execute(`${command} login -u ${username} -p ${password}`);
       const response = await terminal.execute(command, 'login -u poo -p pee');
 
       expect(getLastLine(response)).to.contain('already logged in');
-    })
+    });
 
-    it('does not login with incorrect credentials', async () => {
+    it('does not login with incorrect credentials', async function() {
       const response = await terminal.execute(`${command} login -u poo -p pee`);
 
       expect(getLastLine(response)).to.contain('is not correct');
-    })
-  })
+    });
+  });
 
-  describe('status', () => {
-    it('shows disconnected status', async () => {
+  describe('status', function() {
+    it('shows disconnected status', async function() {
       const response = await terminal.execute(`${command} status`);
 
       expect(getLastLine(response)).to.contain('Status:');
       expect(getLastLine(response)).to.contain('Disconnected');
     });
 
-    it('shows connected status', async () => {
+    it('shows connected status', async function() {
       await terminal.execute(`${command} login -u ${username} -p ${password}`);
       await terminal.execute(`${command} connect`);
       const response = await terminal.execute(`${command} status`);
@@ -66,66 +66,65 @@ describe('Dummy nordvpn', () => {
       expect(candidateStatusLines).to.have.length(1);
       expect(candidateStatusLines[0]).to.contain('Status:');
       expect(candidateStatusLines[0]).to.contain('Connected');
-    })
-  })
+    });
+  });
 
-  describe('connect', () => {
-    it('connects without a city', async () => {
+  describe('connect', function() {
+    it('connects without a city', async function() {
       await terminal.execute(`${command} login -u ${username} -p ${password}`);
 
-      const response = await terminal.execute(`${command} connect`)
+      const response = await terminal.execute(`${command} connect`);
 
       const responseLines = response.split('\n');
       const lastLine = responseLines[responseLines.length - 1];
       expect(lastLine).to.contain('are connected');
-    })
+    });
 
-    it('connects when city exists', async () => {
+    it('connects when city exists', async function() {
       await terminal.execute(`${command} login -u ${username} -p ${password}`);
 
-      const response = await terminal.execute(`${command} connect new_york`)
+      const response = await terminal.execute(`${command} connect new_york`);
 
       const responseLines = response.split('\n');
       const lastLine = responseLines[responseLines.length - 1];
       expect(lastLine).to.contain('are connected');
-    })
+    });
 
-    it('connects by country', async () => {
+    it('connects by country', async function() {
       await terminal.execute(`${command} login -u ${username} -p ${password}`);
 
-      const response = await terminal.execute(`${command} connect united_kingdom`)
+      const response = await terminal.execute(`${command} connect united_kingdom`);
 
       const responseLines = response.split('\n');
       const lastLine = responseLines[responseLines.length - 1];
       expect(lastLine).to.contain('are connected');
-    })
+    });
 
-    it('connects by country code', async () => {
+    it('connects by country code', async function() {
       await terminal.execute(`${command} login -u ${username} -p ${password}`);
 
-      const response = await terminal.execute(`${command} connect gb`)
+      const response = await terminal.execute(`${command} connect gb`);
 
       const responseLines = response.split('\n');
       const lastLine = responseLines[responseLines.length - 1];
       expect(lastLine).to.contain('are connected');
+    });
 
-    })
-
-    it('does not connect when city does not exist', async () => {
+    it('does not connect when city does not exist', async function() {
       await terminal.execute(`${command} login -u ${username} -p ${password}`);
 
-      const response = await terminal.execute(`${command} connect not_a_city`)
+      const response = await terminal.execute(`${command} connect not_a_city`);
 
       const responseLines = response.split('\n');
       const lastLine = responseLines[responseLines.length - 1];
       expect(lastLine).to.contain('try again');
-    })
-  })
+    });
+  });
 
-  describe('geography', () => {
+  describe('geography', function() {
     let countries;
 
-    before(async () => {
+    before(async function() {
       const response = await terminal.execute(`${command} countries`);
       const responseLines = response.split('\n');
 
@@ -136,18 +135,18 @@ describe('Dummy nordvpn', () => {
         .map(it => it.trim())
         .filter(it => it)
         .map(it => it.trim());
-    })
+    });
 
-    it('shows countries', () => {
+    it('shows countries', function() {
       expect(countries).not.to.be.empty;
       countries.forEach(it => {
         expect(it).not.to.include(' ');
         const firstLetter = it.substring(0, 1);
         expect(firstLetter.toUpperCase()).to.equal(firstLetter);
       });
-    })
+    });
 
-    it('shows cities', async () => {
+    it('shows cities', async function() {
       for (let i = 0; i < countries.length; i++) {
         const country = countries[i];
         const rawCities = await terminal.execute(`${command} cities ${country}`);
@@ -166,6 +165,6 @@ describe('Dummy nordvpn', () => {
           return;
         }
       }
-    })
-  })
+    });
+  });
 });

@@ -5,8 +5,7 @@ const util = require('util');
 const countryList = require('countries-list');
 const dummyNordVpn = require('./dummy.nord.vpn');
 
-// TODO: fs.exists depecated
-const exists = util.promisify(fs.exists);
+const access = util.promisify(fs.access);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const statusFile = path.join(__dirname, 'status.test.txt');
@@ -119,7 +118,9 @@ class Dummy {
   }
 
   async getStatus() {
-    if (!(await exists(statusFile))) {
+    try {
+      await access(statusFile);
+    } catch (e) {
       return {};
     }
     const statusJson = await readFile(statusFile, 'utf8');

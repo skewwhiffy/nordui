@@ -7,8 +7,8 @@ module.exports = class {
         if (err) {
           console.warn(err);
         }
-        resolve(stdout? stdout.trim() : stderr);
-      })
-    })
+        resolve(stdout ? stdout.trim() : stderr);
+      });
+    });
   }
-}
+};

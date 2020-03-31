@@ -2,26 +2,35 @@ module.exports = {
   env: {
     browser: true,
     commonjs: true,
-    es6: true
+    mocha: true
   },
   extends: [
-    'plugin:vue/essential',
+    'plugin:mocha/recommended',
     'standard'
   ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
   },
+  parser: 'babel-eslint',
   parserOptions: {
-    ecmaVersion: 2018
+    ecmaVersion: 2019
   },
   plugins: [
-    'vue'
+    'mocha'
   ],
   rules: {
     'array-bracket-spacing': [ 2, 'always' ],
-    'indent': [ 2, 2 ],
+    'indent': [ 2, 2, {
+      SwitchCase: 1
+    }],
     'semi': [ 2, 'always' ],
     'space-before-function-paren': [ 2, 'never' ]
-  }
+  },
+  overrides: [{
+    'files': [ '*.test.js' ],
+    'rules': {
+      'no-unused-expressions': 'off'
+    }
+  }]
 }
