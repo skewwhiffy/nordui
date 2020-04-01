@@ -5,17 +5,15 @@
   "description": "UI for Nord VPN CLI",
   "author": "",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "start": "electron .",
-    "test": "mocha **/*.test.js"
+    "start": "npm run electron:serve",
+    "test": "vue-cli-service lint && mocha **/*.test.js"
   },
-  "main": "background.js",
+  "main": "src/main.js",
   "dependencies": {
     "all-the-cities": "^3.1.0",
     "core-js": "^3.6.4",

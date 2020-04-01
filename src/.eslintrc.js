@@ -29,7 +29,7 @@ module.exports = {
     } ],
     semi: [ 2, 'always' ],
     'space-before-function-paren': [ 2, 'never' ],
-    'vue/html-self-closing': 0
+    'vue/html-self-closing': 0,
     'vue/max-attributes-per-line': 0
   },
   overrides: [ {
