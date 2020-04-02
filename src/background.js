@@ -74,6 +74,11 @@ ipcMain.on('poo-message', (event, arg) => {
   console.log('poo message received');
 });
 
+ipcMain.on('status-get', (event, arg) => {
+  console.log('Status get');
+  event.reply('status-callback', 'hello world');
+});
+
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {

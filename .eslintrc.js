@@ -30,7 +30,7 @@ module.exports = {
       SwitchCase: 1
     } ],
     semi: [ 2, 'always' ],
-    'space-before-function-paren': [ 2, 'never' ]
+    'space-before-function-paren': 0
   },
   overrides: [ {
     files: [ '*.test.js' ],
