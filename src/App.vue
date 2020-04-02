@@ -17,7 +17,7 @@ export default {
   created: function() {
     ipcRenderer.send('poo-message', 'ping');
   }
-};
+}
 </script>
 
 <style>

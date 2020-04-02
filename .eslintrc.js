@@ -13,6 +13,9 @@ module.exports = {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
   },
+  ignorePatterns: [
+    'dist_electron'
+  ],
   parser: 'babel-eslint',
   parserOptions: {
     ecmaVersion: 2019
