@@ -1,21 +1,17 @@
 <template>
   <div id="app">
-    <img
-      alt="Vue logo"
-      src="./assets/logo.png"
-    >
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <Status />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue';
+import Status from './components/Status.vue';
 import { ipcRenderer } from 'electron';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Status
   },
   created: function() {
     ipcRenderer.send('poo-message', 'ping');
