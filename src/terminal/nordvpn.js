@@ -22,6 +22,7 @@ module.exports = class {
       .reduce((a, c) => ({ ...a, [spaceToDashes(c)]: spaceToDashes(nordCityMap[c]) }), {});
     this._geonameCityMap = Object.keys(this._nordCityMap)
       .reduce((a, c) => ({ ...a, [this._nordCityMap[c]]: c }), {});
+    this._getCode = this._getCode.bind(this);
   }
 
   async login({ username, password }) {
@@ -41,7 +42,7 @@ module.exports = class {
       .filter(it => it);
   }
 
-  _getCode = name => {
+  _getCode(name) {
     if (name.includes('_')) {
       return this._getCode(name.split('_').join(' '));
     }

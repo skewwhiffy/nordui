@@ -6,6 +6,7 @@ module.exports = {
     mocha: true
   },
   extends: [
+    'plugin:vue/recommended',
     'plugin:mocha/recommended',
     'standard'
   ],
@@ -16,7 +17,7 @@ module.exports = {
   ignorePatterns: [
     'dist_electron'
   ],
-  parser: 'babel-eslint',
+  parser: 'vue-eslint-parser',
   parserOptions: {
     ecmaVersion: 2019
   },
