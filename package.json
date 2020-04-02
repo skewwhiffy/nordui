@@ -10,7 +10,7 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "start": "npm run electron:serve",
-    "test": "eslint . && mocha src/**/*.test.js"
+    "test": "vue-cli-service lint --no-fix && mocha src/**/*.test.js"
   },
   "main": "src/background.js",
   "dependencies": {
