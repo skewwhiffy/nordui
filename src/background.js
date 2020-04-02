@@ -1,6 +1,6 @@
 'use strict';
 
-import { app, protocol, BrowserWindow } from 'electron';
+import { app, protocol, ipcMain, BrowserWindow } from 'electron';
 import {
   createProtocol
   /* installVueDevtools */
@@ -75,6 +75,10 @@ app.on('ready', async() => {
 
   }
   createWindow();
+});
+
+ipcMain.on('poo-message', (event, arg) => {
+  console.log('poo message received');
 });
 
 // Exit cleanly on request from parent process in development mode.
