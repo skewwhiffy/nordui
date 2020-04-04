@@ -1,0 +1,8 @@
+'use strict';
+
+export default {
+  UNKNOWN: 'UNKNOWN',
+  NOT_LOGGED_IN: 'NOT_LOGGED_IN',
+  NOT_CONNECTED: 'NOT_CONNECTED',
+  CONNECTED: 'CONNECTED'
+};

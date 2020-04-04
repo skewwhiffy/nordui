@@ -1,9 +1,11 @@
 'use strict';
-import { app, protocol, ipcMain, BrowserWindow } from 'electron';
+import { app, protocol, BrowserWindow } from 'electron';
 import {
   createProtocol,
   installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib';
+import IpcSetup from './background/ipc';
+
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -59,7 +61,6 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async() => {
-  console.log('Hello', isDevelopment, process.env.IS_TEST);
   if (isDevelopment && !process.env.IS_TEST) {
     try {
       await installVueDevtools();
@@ -70,14 +71,8 @@ app.on('ready', async() => {
   createWindow();
 });
 
-ipcMain.on('poo-message', (event, arg) => {
-  console.log('poo message received');
-});
-
-ipcMain.on('status-get', (event, arg) => {
-  console.log('Status get');
-  event.reply('status-callback', 'hello world');
-});
+const ipcSetup = new IpcSetup();
+ipcSetup.setup();
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

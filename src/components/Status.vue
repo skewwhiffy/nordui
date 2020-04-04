@@ -9,20 +9,14 @@
 
 <script>
 import { ipcRenderer } from 'electron';
-import util from 'util';
+import status from '../enum/status';
 
-const status = {
-  UNKNOWN: 1,
-  NOT_LOGGED_IN: 2,
-  NOT_CONNECTED: 3,
-  CONNECTED: 4
-};
 const component = {
-  UNKNOWN: 1,
-  RUNNING: 2,
-  DESTROYED: 3
+  UNKNOWN: 'UNKNOWN',
+  RUNNING: 'RUNNING',
+  DESTROYED: 'DESTROYED'
 };
-const wait = util.promisify(setTimeout);
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 export default {
   name: 'Status',
@@ -46,10 +40,11 @@ export default {
   },
   created: function() {
     this.component = component.RUNNING;
+    const self = this;
     ipcRenderer.on('status-callback', async (event, arg) => {
       console.log('Got status callback', event, arg);
       await wait(1000);
-      this.getStatus();
+      self.getStatus();
     });
     this.getStatus();
   },
