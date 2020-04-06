@@ -1,15 +1,18 @@
-const path = require('path');
-const fs = require('fs');
+'use strict';
+// import path from 'path';
+// import fs from 'fs';
 
-module.exports = {
-  username: 'dummy.username',
-  password: 'dummy.password',
-  command: path.join(__dirname, 'dummy.nord.vpn.script.js'),
+export default {
+  // username: 'dummy.username',
+  // password: 'dummy.password',
+  // command: path.join(__dirname, 'dummy.nord.vpn.script.js'),
 
-  async clear() {
-    const statusFile = path.join(__dirname, 'status.test.txt');
+  clear() {
+    // const statusFile = path.join(__dirname, 'status.test.txt');
+    /*
     if (fs.existsSync(statusFile)) {
       fs.unlinkSync(statusFile);
     }
+    */
   }
 };

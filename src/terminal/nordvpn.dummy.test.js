@@ -1,28 +1,30 @@
 'use strict';
-import { expect } from 'chai';
+// import { expect } from 'chai';
+// import dummyNordVpn from './dummy.nord.vpn';
+// import Terminal from './terminal';
+// import NordVpn from './nordvpn';
 
-describe('dummym', function() {
-  it('works', function() {
-    expect(1).to.equal(1);
-  });
-  /*
-  let terminal;
+describe('dummy', function() {
+  // let terminal;
   let nordvpn;
 
-  beforeEach(async function() {
-    await dummyNordVpn.clear();
-    terminal = new Terminal();
-    const config = { executable: command };
-    nordvpn = new NordVpn(config);
+  beforeEach(function() {
+    // dummyNordVpn.clear();
+    // terminal = new Terminal();
+    // const config = { executable: command };
+    // nordvpn = new NordVpn(config);
   });
 
   describe('connection status', function() {
     it('disconnected', async function() {
       const status = await nordvpn.getConnectionStatus();
 
-      expect(status).to.equal(NordVpn.status.connection.DISCONNECTED);
+      console.log(status);
+
+      // expect(status).to.equal(NordVpn.status.connection.DISCONNECTED);
     });
   });
+  /*
 
   describe('user status', function() {
     it('logged in', async function() {
