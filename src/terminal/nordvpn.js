@@ -1,3 +1,4 @@
+'use strict';
 const Terminal = require('./terminal');
 const countriesList = require('countries-list');
 
