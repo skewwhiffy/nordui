@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron';
-import status from '../enum/status';
+const { ipcRenderer } = require('electron');
+const status = require('../enum/status');
 
 const component = {
   UNKNOWN: 'UNKNOWN',

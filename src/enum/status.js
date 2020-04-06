@@ -1,6 +1,6 @@
 'use strict';
 
-export default {
+module.exports = {
   UNKNOWN: 'UNKNOWN',
   NOT_LOGGED_IN: 'NOT_LOGGED_IN',
   NOT_CONNECTED: 'NOT_CONNECTED',

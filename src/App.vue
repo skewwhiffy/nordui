@@ -6,9 +6,9 @@
 
 <script>
 import Status from './components/Status.vue';
-import { ipcRenderer } from 'electron';
+const { ipcRenderer } = require('electron');
 
-export default {
+module.exports = {
   name: 'App',
   components: {
     Status

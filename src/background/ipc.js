@@ -1,10 +1,10 @@
 'use strict';
-import { ipcMain } from 'electron';
+const { ipcMain } = require('electron');
 
 let singleton;
 let count = 0;
 
-class IpcSetup {
+module.exports = class {
   constructor() {
     if (singleton) {
       return singleton;
@@ -20,5 +20,3 @@ class IpcSetup {
     });
   }
 };
-
-export default IpcSetup;
