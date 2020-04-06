@@ -1,7 +1,13 @@
-'use strict';
+import path from 'path';
+import fs from 'fs';
+import util from 'util';
 import countryList from 'countries-list';
+import dummyNordVpn from './dummy.nord.vpn.js';
 
-let status;
+const access = util.promisify(fs.access);
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
+const statusFile = path.join(__dirname, 'status.test.txt');
 
 const countryMap = {
   Albania: [ 'Tirana' ],
@@ -80,24 +86,19 @@ const countryMap = {
   Vietnam: [ 'Hanoi' ]
 };
 
-export default class DummyNordVpn {
-  async execute(args) {
-    if (typeof args === 'string') {
-      return await this.execute(args.split(' '));
-    }
+class Dummy {
+  async exec(args) {
     this.dummyStatus = await this.getStatus();
-    if (!Array.isArray(args) || args.length === 0) {
+    if (args.length === 0) {
       return await this.noargs();
     }
     if (args[0] === 'login') {
-      const result = await this.login(args);
-      await this.saveStatus();
-      return result;
+      await this.login(args);
+      return await this.saveStatus();
     }
     if (args[0] === 'connect') {
-      const result = await this.connect(args);
-      await this.saveStatus();
-      return result;
+      await this.connect(args);
+      return await this.saveStatus();
     }
     if (args[0] === 'status') {
       return await this.status(args);
@@ -108,65 +109,68 @@ export default class DummyNordVpn {
     if (args[0] === 'cities') {
       return await this.cities(args);
     }
-    return `Command '${args[0]}' doesn't exist`;
-  }
-
-  async clear() {
-    status = null;
+    console.log(`Command '${args[0]}' doesn't exist`);
   }
 
   async saveStatus() {
-    status = this.dummyStatus;
+    await writeFile(statusFile, JSON.stringify(this.dummyStatus));
   }
 
   async getStatus() {
-    return status || {};
+    try {
+      await access(statusFile);
+    } catch (e) {
+      return {};
+    }
+    const statusJson = await readFile(statusFile, 'utf8');
+    return JSON.parse(statusJson);
   }
 
   async countries() {
-    return Object.keys(countryMap).join(', ');
+    console.log(Object.keys(countryMap).join(', '));
   }
 
-  async cities(args) {
+  async cities() {
     if (args.length !== 2) {
       throw new Error({
         message: 'Need only a country name'
       });
     }
-    return countryMap[args[1]].join(', ');
+    console.log(countryMap[args[1]].join(', '));
   }
 
   async connect(args) {
     if (!this.dummyStatus.loggedIn) {
-      return 'TODO: Not logged in, not going to connect';
-      // This is different behaviour to the actual client, that now prompts for username and password.
+      console.log('TODO: Not logged in, not going to connect');
+      // This is different behavious to the actual client, that now prompts for username and password.
+      return;
     }
     const location = args.length >= 2 ? args[1] : 'gb';
     const country = this._getCountry(location);
     if (country) {
       this.dummyStatus.connected = true;
       // The country codes and the Nord server prefixes don't fully match, but this is good enough for us.
-      return [ `Connecting to ${country.name} #1474 (${country.code}1474.nordvpn.com)`,
-        `You are connected to ${country.name} #1474 (${country.code}1474.nordvpn.com)!` ]
-        .join('\n');
+      console.log(`Connecting to ${country.name} #1474 (${country.code}1474.nordvpn.com)`);
+      console.log(`You are connected to ${country.name} #1474 (${country.code}1474.nordvpn.com)!`);
+      return;
     }
-    return `Whoops! We couldn't connect you to '${location}'. Please try again. If the problem persists, contact our customer support.`;
+    console.log(`Whoops! We couldn't connect you to '${location}'. Please try again. If the problem persists, contact our customer support.`);
   }
 
   async status() {
     if (this.dummyStatus.connected) {
-      return [ 'Status: Connected',
-        'Current server: uk1474.nordvpn.com',
-        'Country: United Kingdom',
-        'City: London',
-        'Your new IP: 194.35.233.27',
-        'Current technology: OpenVPN',
-        'Current protocol: UDP',
-        'Transfer: 1.87 MiB received, 0.62 MiB sent',
-        'Uptime: 2 minutes 14 seconds' ]
-        .join('\n');
+      console.log('Status: Connected');
+      console.log('Current server: uk1474.nordvpn.com');
+      console.log('Country: United Kingdom');
+      console.log('City: London');
+      console.log('Your new IP: 194.35.233.27');
+      console.log('Current technology: OpenVPN');
+      console.log('Current protocol: UDP');
+      console.log('Transfer: 1.87 MiB received, 0.62 MiB sent');
+      console.log('Uptime: 2 minutes 14 seconds');
+      return;
     }
-    return 'Status: Disconnected';
+    console.log('Status: Disconnected');
   }
 
   async login(args) {
@@ -183,27 +187,20 @@ export default class DummyNordVpn {
     }
     const { username, password } = args;
     if (this.dummyStatus.loggedIn) {
-      return 'You are already logged in.';
+      console.log('You are already logged in.');
+      return;
     }
-    if (this.trimQuotes(username) !== DummyNordVpn.username || this.trimQuotes(password) !== DummyNordVpn.password) {
-      return 'Username or password is not correct. Please try again.';
+    if (username !== dummyNordVpn.username || password !== dummyNordVpn.password) {
+      console.log('Username or password is not correct. Please try again.');
+      return;
     }
     this.dummyStatus.loggedIn = true;
-    return 'Welcome to NordVPN! You can now connect to VPN by using \'nordvpn connect\'';
-  }
-
-  trimQuotes(source) {
-    if (source.startsWith('\'')) {
-      return this.trimQuotes(source.substring(1));
-    }
-    if (source.endsWith('\'')) {
-      return this.trimQuotes(source.substring(0, source.length - 1));
-    }
-    return source;
+    console.log(this.dummyStatus);
+    console.log('Welcome to NordVPN! You can now connect to VPN by using \'nordvpn connect\'');
   }
 
   async noargs() {
-    return `
+    console.log(`
 Welcome to NordVPN Linux client app!
 Version 3.7.0-2
 Website: https://nordvpn.com
@@ -234,7 +231,7 @@ Global options:
 For more detailed information, please check manual page.
 
 Our customer support works 24/7 so if you have any questions or issues, drop us a line at https://support.nordvpn.com/
-`;
+`);
   }
 
   _getCountry(location) {
@@ -244,7 +241,7 @@ Our customer support works 24/7 so if you have any questions or issues, drop us 
         const countryCodeCandidates = Object.keys(countryList.countries)
           .filter(it => countryList.countries[it].name.toLowerCase().split(' ').join('_') === country.toLowerCase());
         if (countryCodeCandidates.length !== 1) {
-          throw new Error(`Do not recognize country '${country}'`);
+          console.log(`Do not recognize country '${country}'`);
         }
         const cities = countryMap[country].map(it => it.toLowerCase());
         const countryCode = countryCodeCandidates[0].toLowerCase();
@@ -256,7 +253,10 @@ Our customer support works 24/7 so if you have any questions or issues, drop us 
       .filter(it => it);
     return candidates.length === 1 ? candidates[0] : false;
   }
-};
+}
 
-DummyNordVpn.username = 'dummy.username';
-DummyNordVpn.password = 'dummy.password';
+const args = process.argv.slice(2);
+(async function() {
+  const dummy = new Dummy();
+  await dummy.exec(args);
+})();

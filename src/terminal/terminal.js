@@ -1,6 +1,7 @@
-const { exec } = require('child_process');
+'use strict';
+import { exec } from 'child_process';
 
-module.exports = class {
+export default class {
   execute(...args) {
     return new Promise(resolve => {
       exec(args.filter(it => it).join(' '), (err, stdout, stderr) => {

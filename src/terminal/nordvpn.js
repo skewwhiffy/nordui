@@ -1,10 +1,11 @@
 'use strict';
-const Terminal = require('./terminal');
-const countriesList = require('countries-list');
+import Terminal from './terminal';
+import Wrapper from './command.wrapper';
+import countriesList from 'countries-list';
 
 module.exports = class {
   constructor({ executable }) {
-    this.executable = executable;
+    this.wrapper = new Wrapper(executable);
     this.terminal = new Terminal();
     const nordCityMap = {
       Belgrad: 'Belgrade',

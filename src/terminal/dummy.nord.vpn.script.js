@@ -1,91 +1,14 @@
 #!/usr/bin/env node
-const path = require('path');
-const fs = require('fs');
-const util = require('util');
-const countryList = require('countries-list');
-const dummyNordVpn = require('./dummy.nord.vpn');
+import path from 'path';
+import fs from 'fs';
+import util from 'util';
+import countryList from 'countries-list';
+import dummyNordVpn from './dummy.nord.vpn.js';
 
 const access = util.promisify(fs.access);
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const statusFile = path.join(__dirname, 'status.test.txt');
-
-const countryMap = {
-  Albania: [ 'Tirana' ],
-  Argentina: [ 'Buenos_Aires' ],
-  Australia: [ 'Adelaide', 'Brisbane', 'Melbourne', 'Perth', 'Sydney' ],
-  Austria: [ 'Vienna' ],
-  Belgium: [ 'Brussels' ],
-  Bosnia_And_Herzegovina: [ 'Sarajevo' ],
-  Brazil: [ 'San_Paulo' ],
-  Bulgaria: [ 'Sofia' ],
-  Canada: [ 'Montreal', 'Toronto', 'Vancouver' ],
-  Chile: [ 'Santiago' ],
-  Costa_Rica: [ 'San_Jose' ],
-  Croatia: [ 'Zagreb' ],
-  Cyprus: [ 'Nicosia' ],
-  Czech_Republic: [ 'Prague' ],
-  Denmark: [ 'Copenhagen' ],
-  Estonia: [ 'Tallinn' ],
-  Finland: [ 'Helsinki' ],
-  France: [ 'Paris' ],
-  Georgia: [ 'Tbilisi' ],
-  Germany: [ 'Berlin', 'Frankfurt' ],
-  Greece: [ 'Athens' ],
-  Hong_Kong: [ 'Hong_Kong' ],
-  Hungary: [ 'Budapest' ],
-  Iceland: [ 'Reykjavik' ],
-  India: [ 'Chennai', 'Mumbai' ],
-  Indonesia: [ 'Jakarta' ],
-  Ireland: [ 'Dublin' ],
-  Israel: [ 'Tel_Aviv' ],
-  Italy: [ 'Milan' ],
-  Japan: [ 'Tokyo' ],
-  Latvia: [ 'Riga' ],
-  Luxembourg: [ 'Steinsel' ],
-  Malaysia: [ 'Kuala_Lumpur' ],
-  Mexico: [ 'Mexico' ],
-  Moldova: [ 'Chisinau' ],
-  Netherlands: [ 'Amsterdam' ],
-  New_Zealand: [ 'Auckland' ],
-  North_Macedonia: [ 'Skopje' ],
-  Norway: [ 'Oslo' ],
-  Poland: [ 'Warsaw' ],
-  Portugal: [ 'Lisbon' ],
-  Romania: [ 'Bucharest' ],
-  Serbia: [ 'Belgrad' ],
-  Singapore: [ 'Singapore' ],
-  Slovakia: [ 'Bratislava' ],
-  Slovenia: [ 'Ljubljana' ],
-  South_Africa: [ 'Johannesburg' ],
-  South_Korea: [ 'Seoul' ],
-  Spain: [ 'Madrid' ],
-  Sweden: [ 'Stockholm' ],
-  Switzerland: [ 'Zurich' ],
-  Taiwan: [ 'Taipei' ],
-  Thailand: [ 'Bangkok' ],
-  Turkey: [ 'Istanbul' ],
-  Ukraine: [ 'Kiev' ],
-  United_Kingdom: [ 'London' ],
-  United_States: [
-    'Atlanta',
-    'Buffalo',
-    'Charlotte',
-    'Chicago',
-    'Dallas',
-    'Denver',
-    'Los_Angeles',
-    'Manassas',
-    'Miami',
-    'New_York',
-    'Phoenix',
-    'Saint_Louis',
-    'Salt_Lake_City',
-    'San_Francisco',
-    'Seattle'
-  ],
-  Vietnam: [ 'Hanoi' ]
-};
 
 class Dummy {
   async exec(args) {
@@ -131,7 +54,7 @@ class Dummy {
     console.log(Object.keys(countryMap).join(', '));
   }
 
-  async cities() {
+  async cities(args) {
     if (args.length !== 2) {
       throw new Error({
         message: 'Need only a country name'

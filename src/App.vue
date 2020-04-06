@@ -8,7 +8,7 @@
 import Status from './components/Status.vue';
 const { ipcRenderer } = require('electron');
 
-module.exports = {
+export default {
   name: 'App',
   components: {
     Status
