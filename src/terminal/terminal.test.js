@@ -1,5 +1,6 @@
-const Terminal = require('./terminal');
-const { expect } = require('chai');
+'use strict';
+import Terminal from './terminal';
+import { expect } from 'chai';
 
 describe('Terminal', function() {
   const terminal = new Terminal();
