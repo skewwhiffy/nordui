@@ -35,7 +35,8 @@ module.exports = {
   overrides: [ {
     files: [ '*.test.js' ],
     rules: {
-      'no-unused-expressions': 'off'
+      'no-unused-expressions': 'off',
+      'mocha/no-setup-in-describe': 'warn'
     }
   } ]
 };

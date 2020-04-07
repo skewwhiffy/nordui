@@ -1,8 +1,6 @@
 'use strict';
 import countryList from 'countries-list';
 
-let status;
-
 const countryMap = {
   Albania: [ 'Tirana' ],
   Argentina: [ 'Buenos_Aires' ],
@@ -83,7 +81,7 @@ const countryMap = {
 export default class DummyNordVpn {
   async execute(args) {
     if (typeof args === 'string') {
-      return await this.execute(args.split(' '));
+      return await this.execute(args.split(' ').filter(it => it));
     }
     this.dummyStatus = await this.getStatus();
     if (!Array.isArray(args) || args.length === 0) {
@@ -112,15 +110,15 @@ export default class DummyNordVpn {
   }
 
   async clear() {
-    status = null;
+    this.serviceStatus = null;
   }
 
   async saveStatus() {
-    status = this.dummyStatus;
+    this.serviceStatus = this.dummyStatus;
   }
 
   async getStatus() {
-    return status || {};
+    return this.serviceStatus || {};
   }
 
   async countries() {

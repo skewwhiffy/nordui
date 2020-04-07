@@ -14,7 +14,6 @@
   },
   "main": "src/background.js",
   "dependencies": {
-    "all-the-cities": "^3.1.0",
     "core-js": "^3.6.4",
     "countries-list": "^2.5.4",
     "vue": "^2.6.11"

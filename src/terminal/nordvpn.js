@@ -1,12 +1,10 @@
 'use strict';
-import Terminal from './terminal';
-import Wrapper from './command.wrapper';
 import countriesList from 'countries-list';
+import userStatuses from '../enum/user.status';
 
 module.exports = class {
-  constructor({ executable }) {
-    this.wrapper = new Wrapper(executable);
-    this.terminal = new Terminal();
+  constructor({ wrapper }) {
+    this.wrapper = wrapper;
     const nordCityMap = {
       Belgrad: 'Belgrade',
       Frankfurt: 'Frankfurt am Main',
@@ -28,12 +26,12 @@ module.exports = class {
   }
 
   async login({ username, password }) {
-    const terminalResponse = await this.terminal.execute(`${this.executable} login -u ${username} -p ${password}`);
+    const terminalResponse = await this.wrapper.execute(`login -u ${username} -p ${password}`);
     return terminalResponse.includes('Welcome');
   }
 
   async _getCountriesRaw() {
-    const terminalResponse = await this.terminal.execute(`${this.executable} countries`);
+    const terminalResponse = await this.wrapper.execute('countries');
     const terminalLines = terminalResponse.split('\n');
     return terminalLines[terminalLines.length - 1]
       .split(' ')
@@ -65,14 +63,12 @@ module.exports = class {
 
   async connect(location) {
     const userStatus = await this.getUserStatus();
-    if (userStatus !== module.exports.status.user.LOGGEDIN) {
-      throw new Error({
-        message: 'Not logged in, cannot connect'
-      });
+    if (userStatus !== userStatuses.LOGGEDIN) {
+      throw new Error('Not logged in, cannot connect');
     }
 
     const nordLocation = this._geonameCityMap[location] || location || '';
-    const result = await this.terminal.execute(`${this.executable} connect ${nordLocation}`);
+    const result = await this.wrapper.execute(`connect ${nordLocation}`);
     return result.includes('are connected');
   }
 
@@ -86,7 +82,7 @@ module.exports = class {
       });
     }
     const rawCountry = rawCountryCandidates[0];
-    const terminalResponse = await this.terminal.execute(`${this.executable} cities ${rawCountry}`);
+    const terminalResponse = await this.wrapper.execute(`cities ${rawCountry}`);
     const terminalLines = terminalResponse.split('\n');
     return terminalLines[terminalLines.length - 1]
       .split(' ')
@@ -103,7 +99,7 @@ module.exports = class {
   }
 
   async getConnectionStatus() {
-    const terminalResponse = await this.terminal.execute(this.executable, 'status');
+    const terminalResponse = await this.wrapper.execute('status');
     const candidateStatusLines = terminalResponse
       .split('\n')
       .filter(it => it.startsWith('Status:'));
@@ -128,12 +124,12 @@ module.exports = class {
   }
 
   async getUserStatus() {
-    const terminalResponse = await this.terminal.execute(`${this.executable} login -u poo -p wee`);
+    const terminalResponse = await this.wrapper.execute('login -u poo -p wee');
     if (terminalResponse.includes('already logged in')) {
-      return module.exports.status.user.LOGGEDIN;
+      return userStatuses.LOGGEDIN;
     }
     if (terminalResponse.includes('try again')) {
-      return module.exports.status.user.LOGGEDOUT;
+      return userStatuses.LOGGEDOUT;
     }
     throw new Error({
       message: 'Don\'t understand: ' + terminalResponse,
@@ -146,9 +142,5 @@ module.exports.status = {
   connection: {
     DISCONNECTED: 1,
     CONNECTED: 2
-  },
-  user: {
-    LOGGEDOUT: 1,
-    LOGGEDIN: 2
   }
 };

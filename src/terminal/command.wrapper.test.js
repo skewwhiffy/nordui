@@ -1,5 +1,6 @@
 'use strict';
 import Wrapper from './command.wrapper';
+import { expect } from 'chai';
 
 describe('Command wrapper', function() {
   it('executes command without arguments', async function() {
@@ -7,6 +8,6 @@ describe('Command wrapper', function() {
 
     const response = await wrapper.execute();
 
-    console.log(response);
+    expect(response).not.to.be.empty;
   });
 });
