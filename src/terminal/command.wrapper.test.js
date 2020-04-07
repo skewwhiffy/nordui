@@ -10,4 +10,12 @@ describe('Command wrapper', function() {
 
     expect(response).not.to.be.empty;
   });
+
+  it('executes command with arguments', async function() {
+    const wrapper = new Wrapper('ls');
+
+    const response = await wrapper.execute('-al');
+
+    expect(response).to.contain('total');
+  });
 });

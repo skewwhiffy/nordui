@@ -8,8 +8,8 @@
 </template>
 
 <script>
-const { ipcRenderer } = require('electron');
-const status = require('../enum/status');
+import { ipcRenderer } from 'electron';
+import status from '../enum/status';
 
 const component = {
   UNKNOWN: 'UNKNOWN',
@@ -42,7 +42,7 @@ export default {
     this.component = component.RUNNING;
     const self = this;
     ipcRenderer.on('status-callback', async (event, arg) => {
-      console.log('Got status callback', event, arg);
+      self.status = arg;
       await wait(1000);
       self.getStatus();
     });

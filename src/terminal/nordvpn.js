@@ -1,8 +1,9 @@
 'use strict';
 import countriesList from 'countries-list';
 import userStatuses from '../enum/user.status';
+import connectionStatuses from '../enum/connection.status';
 
-module.exports = class {
+export default class {
   constructor({ wrapper }) {
     this.wrapper = wrapper;
     const nordCityMap = {
@@ -112,14 +113,11 @@ module.exports = class {
     const statusLine = candidateStatusLines[0];
     switch (statusLine.substring('Status:'.length).trim().toLowerCase()) {
       case 'disconnected':
-        return module.exports.status.connection.DISCONNECTED;
+        return connectionStatuses.DISCONNECTED;
       case 'connected':
-        return module.exports.status.connection.CONNECTED;
+        return connectionStatuses.CONNECTED;
       default:
-        throw new Error({
-          message: 'Could not determine status from status line ' + statusLine,
-          statusLine
-        });
+        return connectionStatuses.UNKNOWN;
     }
   }
 
@@ -131,16 +129,6 @@ module.exports = class {
     if (terminalResponse.includes('try again')) {
       return userStatuses.LOGGEDOUT;
     }
-    throw new Error({
-      message: 'Don\'t understand: ' + terminalResponse,
-      terminalResponse
-    });
-  }
-};
-
-module.exports.status = {
-  connection: {
-    DISCONNECTED: 1,
-    CONNECTED: 2
+    return userStatuses.UNKNOWN;
   }
 };

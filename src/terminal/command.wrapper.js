@@ -7,7 +7,7 @@ export default class {
     this.terminal = new Terminal();
   }
 
-  async execute() {
-    return await this.terminal.execute(this.command);
+  async execute(...args) {
+    return await this.terminal.execute(this.command, ...args);
   }
 }

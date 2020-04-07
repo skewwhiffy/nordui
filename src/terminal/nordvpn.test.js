@@ -1,5 +1,6 @@
 'use strict';
 import userStatus from '../enum/user.status';
+import connectionStatus from '../enum/connection.status';
 import NordVpn from './nordvpn';
 import Wrapper from './dummy.nord.vpn';
 import { expect } from 'chai';
@@ -19,7 +20,7 @@ describe('NordVPN', function() {
     it('disconnected', async function() {
       const status = await nordvpn.getConnectionStatus();
 
-      expect(status).to.equal(NordVpn.status.connection.DISCONNECTED);
+      expect(status).to.equal(connectionStatus.DISCONNECTED);
     });
   });
 
@@ -67,7 +68,7 @@ describe('NordVPN', function() {
 
       const status = await nordvpn.getConnectionStatus();
       expect(result).to.be.true;
-      expect(status).to.equal(NordVpn.status.connection.CONNECTED);
+      expect(status).to.equal(connectionStatus.CONNECTED);
     });
 
     it('can connect with city', async function() {
@@ -77,7 +78,7 @@ describe('NordVPN', function() {
 
       const status = await nordvpn.getConnectionStatus();
       expect(result).to.be.true;
-      expect(status).to.equal(NordVpn.status.connection.CONNECTED);
+      expect(status).to.equal(connectionStatus.CONNECTED);
     });
 
     it('can connect with country code', async function() {
@@ -87,7 +88,7 @@ describe('NordVPN', function() {
 
       const status = await nordvpn.getConnectionStatus();
       expect(result).to.be.true;
-      expect(status).to.equal(NordVpn.status.connection.CONNECTED);
+      expect(status).to.equal(connectionStatus.CONNECTED);
     });
 
     it('cannot connect with incorrect city', async function() {
@@ -97,7 +98,7 @@ describe('NordVPN', function() {
 
       const status = await nordvpn.getConnectionStatus();
       expect(result).to.be.false;
-      expect(status).to.equal(NordVpn.status.connection.DISCONNECTED);
+      expect(status).to.equal(connectionStatus.DISCONNECTED);
     });
   });
 
