@@ -28,14 +28,12 @@ export default {
   },
   computed: {
     statusMessage() {
-      switch (this.status) {
-        case status.UNKNOWN:
-          return 'Unknown';
-        default:
-          throw new Error({
-            message: `I do not recognise status ${this.status}`
-          });
-      }
+      return {
+        UNKNOWN: 'Unknown',
+        NOT_LOGGED_IN: 'Not logged in',
+        NOT_CONNECTED: 'Not connected',
+        CONNECTED: 'Connected'
+      }[this.status] || 'Not understood';
     }
   },
   created: function() {
@@ -53,7 +51,9 @@ export default {
   },
   methods: {
     async getStatus() {
-      console.log('get status');
+      if (this.component === component.DESTROYED) {
+        return;
+      }
       ipcRenderer.send('status-get', '');
     }
   }
