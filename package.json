@@ -10,8 +10,8 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "start": "npm run electron:serve",
-    "test": "vue-cli-service test:unit --require 'regenerator-runtime/runtime' src/**/*.test.js",
-    "dev:test": "vue-cli-service test:unit --watch --require 'regenerator-runtime/runtime' src/**/*.test.js"
+    "dev:test": "vue-cli-service test:unit --require 'regenerator-runtime/runtime' --watch src/**/*.test.js",
+    "test": "vue-cli-service test:unit --require 'regenerator-runtime/runtime' src/**/*.test.js"
   },
   "main": "src/background.js",
   "dependencies": {
