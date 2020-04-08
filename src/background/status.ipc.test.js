@@ -38,7 +38,7 @@ describe('Status IPC', function() {
 
     const status = await statusIpc.status();
 
-    expect(status).to.equal(statuses.LOGGED_IN);
+    expect(status).to.equal(statuses.NOT_CONNECTED);
   });
 
   it('gets unknown status', async function() {
