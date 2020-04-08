@@ -7,6 +7,7 @@ import { expect } from 'chai';
 
 describe('Status poller', function() {
   const realWaiter = new Waiter();
+  let changed;
   let status;
   let config;
   let poller;
@@ -21,10 +22,14 @@ describe('Status poller', function() {
         this.callback({}, status);
       }
     };
+    changed = false;
     status = statuses.UNKNOWN;
     const ms = 10;
     config = { ipcRenderer, ms, waiter };
     poller = new StatusPoller(config);
+    poller.onChange(() => {
+      changed = true;
+    });
   });
 
   afterEach(function() {
@@ -44,6 +49,7 @@ describe('Status poller', function() {
       config.waiter.elapse();
       await realWaiter.wait(10);
     }
+    expect(changed).to.be.true;
   });
 
   it('is a singleton', function() {

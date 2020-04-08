@@ -11,8 +11,13 @@ export default class {
     this.ms = ms;
     this.currentStatus = statuses.UNKNOWN;
     this.ipcRenderer = ipcRenderer;
+    this.onChangeFunction = () => {};
     ipcRenderer.on('status-callback', async (event, arg) => {
+      const oldStatus = this.currentStatus;
       this.currentStatus = arg;
+      if (oldStatus !== arg) {
+        this.onChangeFunction();
+      }
       await waiter.wait(ms);
       this.poll();
     });
@@ -28,6 +33,10 @@ export default class {
 
   get status() {
     return this.currentStatus;
+  }
+
+  onChange(func) {
+    this.onChangeFunction = func;
   }
 
   destroy() {

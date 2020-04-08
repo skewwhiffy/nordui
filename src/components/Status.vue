@@ -9,21 +9,23 @@
 
 <script>
 import { ipcRenderer } from 'electron';
-import status from '../enum/status';
+import statuses from '../enum/status';
+import Waiter from '../util/waiter.js';
+import StatusPoller from '../foreground/status.poller.js';
 
 const component = {
   UNKNOWN: 'UNKNOWN',
   RUNNING: 'RUNNING',
   DESTROYED: 'DESTROYED'
 };
-const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+let poller = {};
 
 export default {
   name: 'Status',
   data() {
     return {
-      status: status.UNKNOWN,
-      component: component.UNKNOWN
+      component: component.UNKNOWN,
+      status: statuses.UNKNOWN
     };
   },
   computed: {
@@ -37,25 +39,16 @@ export default {
     }
   },
   created: function() {
-    this.component = component.RUNNING;
-    const self = this;
-    ipcRenderer.on('status-callback', async (event, arg) => {
-      self.status = arg;
-      await wait(1000);
-      self.getStatus();
+    const waiter = new Waiter();
+    poller = new StatusPoller({ ipcRenderer, ms: 1000, waiter });
+    poller.onChange(() => {
+      console.log('Hello mum', poller.status);
+      this.status = poller.status;
     });
-    this.getStatus();
   },
   beforeDestroy() {
-    this.component = component.DESTROYED;
-  },
-  methods: {
-    async getStatus() {
-      if (this.component === component.DESTROYED) {
-        return;
-      }
-      ipcRenderer.send('status-get', '');
-    }
+    poller.destroy();
+    poller = {};
   }
 };
 </script>
