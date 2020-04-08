@@ -8,13 +8,12 @@ import { expect } from 'chai';
 describe('Status poller', function() {
   const realWaiter = new Waiter();
   let status;
-  let waiter;
-  let ipcRenderer;
+  let config;
   let poller;
 
   beforeEach(function() {
-    waiter = new DummyWaiter();
-    ipcRenderer = {
+    const waiter = new DummyWaiter();
+    const ipcRenderer = {
       on(name, func) {
         this.callback = func;
       },
@@ -23,7 +22,13 @@ describe('Status poller', function() {
       }
     };
     status = statuses.UNKNOWN;
-    poller = new StatusPoller({ ipcRenderer, ms: 10, waiter });
+    const ms = 10;
+    config = { ipcRenderer, ms, waiter };
+    poller = new StatusPoller(config);
+  });
+
+  afterEach(function() {
+    poller.destroy();
   });
 
   it('polls for status', function() {
@@ -36,8 +41,34 @@ describe('Status poller', function() {
     status = statuses.CONNECTED;
 
     while (poller.status !== status) {
-      waiter.elapse();
+      config.waiter.elapse();
       await realWaiter.wait(10);
+    }
+  });
+
+  it('is a singleton', function() {
+    const newPoller = new StatusPoller(config);
+
+    expect(newPoller).to.equal(poller);
+  });
+
+  it('reinstantiates when destroyed', function() {
+    poller.destroy();
+
+    const newPoller = new StatusPoller(config);
+
+    expect(newPoller).not.to.equal(poller);
+  });
+
+  it('does not poll when destroyed', function() {
+    poller.destroy();
+    status = statuses.NOT_LOGGED_IN;
+
+    poller.poll();
+
+    for (let i = 0; i < 10; i++) {
+      config.waiter.elapse();
+      expect(poller.status).not.to.equal(status);
     }
   });
 });

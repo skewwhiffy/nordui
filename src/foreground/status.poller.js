@@ -1,8 +1,13 @@
 'use strict';
 import statuses from '../enum/status';
 
+let singleton;
+
 export default class {
   constructor({ ipcRenderer, ms, waiter }) {
+    if (singleton) {
+      return singleton;
+    }
     this.ms = ms;
     this.currentStatus = statuses.UNKNOWN;
     this.ipcRenderer = ipcRenderer;
@@ -12,13 +17,21 @@ export default class {
       this.poll();
     });
     this.poll();
+    singleton = this;
   }
 
   poll() {
-    this.ipcRenderer.send('status-get', '');
+    if (!this.destroyed) {
+      this.ipcRenderer.send('status-get', '');
+    }
   }
 
   get status() {
     return this.currentStatus;
+  }
+
+  destroy() {
+    this.destroyed = true;
+    singleton = null;
   }
 }
