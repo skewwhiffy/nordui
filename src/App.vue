@@ -1,20 +1,19 @@
 <template>
   <div id="app">
     <Status />
+    <Map />
   </div>
 </template>
 
 <script>
 import Status from './components/Status.vue';
-import { ipcRenderer } from 'electron';
+import Map from './components/Map.vue';
 
 export default {
   name: 'App',
   components: {
-    Status
-  },
-  created: function() {
-    ipcRenderer.send('poo-message', 'ping');
+    Status,
+    Map
   }
 };
 </script>

@@ -17,7 +17,9 @@
   "dependencies": {
     "core-js": "^3.6.4",
     "countries-list": "^2.5.4",
-    "vue": "^2.6.11"
+    "leaflet": "^1.6.0",
+    "vue": "^2.6.11",
+    "vue2-leaflet": "^2.5.2"
   },
   "devDependencies": {
     "@babel/register": "^7.9.0",
