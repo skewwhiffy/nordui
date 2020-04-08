@@ -10,6 +10,6 @@ export default class {
   async poll() {
     await this.pollFunction();
     await this.waiter.wait(this.ms);
-    this.poll();
+    await this.poll();
   }
 }

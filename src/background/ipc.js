@@ -1,5 +1,4 @@
 'use strict';
-import { ipcMain } from 'electron';
 import Wrapper from '../terminal/command.wrapper';
 import NordVpn from '../terminal/nordvpn';
 import StatusIpc from './status.ipc';
@@ -7,19 +6,20 @@ import StatusIpc from './status.ipc';
 let singleton;
 
 export default class {
-  constructor() {
+  constructor({ ipcMain }) {
     if (singleton) {
       return singleton;
     }
     singleton = this;
+    this.ipcMain = ipcMain;
     const wrapper = new Wrapper('nordvpn');
     this.nordVpn = new NordVpn({ wrapper });
+    this.statusIpc = new StatusIpc(this);
   }
 
   setup() {
-    const statusIpc = new StatusIpc(this);
-    ipcMain.on('status-get', async (event, arg) => {
-      event.reply('status-callback', await statusIpc.status());
+    this.ipcMain.on('status-get', async (event, arg) => {
+      event.reply('status-callback', await this.statusIpc.status());
     });
   }
 }
