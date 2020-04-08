@@ -36,6 +36,7 @@ module.exports = {
     files: [ '*.test.js' ],
     rules: {
       'no-unused-expressions': 'off',
+      'no-unused-vars': 'warn',
       'mocha/no-setup-in-describe': 'warn'
     }
   } ]
