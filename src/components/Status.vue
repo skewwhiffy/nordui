@@ -1,24 +1,24 @@
 <template>
   <div class="status">
     <h1>Status</h1>
-    <p>{{ status }}</p>
+    <p>here: {{ status }}</p>
   </div>
 </template>
 
 <script>
 import { ipcRenderer } from 'electron';
-import statuses from '../enum/status';
-import Waiter from '../util/waiter.js';
-import StatusPoller from '../foreground/status.poller.js';
+import Waiter from '../util/waiter';
+import StatusPoller from '../foreground/status.poller';
 
 let poller = {};
 
 export default {
   name: 'Status',
-  data() {
-    return {
-      status: statuses.UNKNOWN
-    };
+  props: {
+    status: {
+      type: String,
+      required: true
+    }
   },
   computed: {
     statusMessage() {

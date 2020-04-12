@@ -14,9 +14,6 @@ export default {
     LMap,
     LTileLayer,
     LMarker
-  },
-  created: function() {
-    console.log(LMap);
   }
 };
 </script>
