@@ -6,7 +6,7 @@ let singleton;
 export default class {
   constructor({ ipcRenderer, ms, waiter }) {
     if (singleton) {
-      return singleton;
+      throw new Error('Do not instantiate multiple instances of the status poller');
     }
     this.ms = ms;
     this.currentStatus = statuses.UNKNOWN;

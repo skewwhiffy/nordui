@@ -52,10 +52,15 @@ describe('Status poller', function() {
     expect(changed).to.be.true;
   });
 
-  it('is a singleton', function() {
-    const newPoller = new StatusPoller(config);
-
-    expect(newPoller).to.equal(poller);
+  it('throws when constructing a second one', function() {
+    let poller;
+    try {
+      poller = new StatusPoller(config);
+    } catch (e) {
+      expect(e).not.to.be.null;
+      return;
+    }
+    expect(poller).to.equal(1);
   });
 
   it('reinstantiates when destroyed', function() {
