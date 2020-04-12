@@ -1,7 +1,8 @@
 'use strict';
-import userStatus from '../enum/user.status';
-import connectionStatus from '../enum/connection.status';
+import userStatuses from '../enum/user.status';
+import connectionStatuses from '../enum/connection.status';
 import NordVpn from './nordvpn';
+import RealWrapper from './command.wrapper';
 import Wrapper from './dummy.nord.vpn';
 import { expect } from 'chai';
 
@@ -20,7 +21,7 @@ describe('NordVPN', function() {
     it('disconnected', async function() {
       const status = await nordvpn.getConnectionStatus();
 
-      expect(status).to.equal(connectionStatus.DISCONNECTED);
+      expect(status).to.equal(connectionStatuses.DISCONNECTED);
     });
   });
 
@@ -30,33 +31,33 @@ describe('NordVPN', function() {
 
       const status = await nordvpn.getUserStatus();
 
-      expect(status).to.equal(userStatus.LOGGEDIN);
+      expect(status).to.equal(userStatuses.LOGGEDIN);
     });
 
     it('logged out', async function() {
       const status = await nordvpn.getUserStatus();
 
-      expect(status).to.equal(userStatus.LOGGEDOUT);
+      expect(status).to.equal(userStatuses.LOGGEDOUT);
     });
   });
 
   describe('login', function() {
     it('can login', async function() {
-      expect(await nordvpn.getUserStatus()).to.equal(userStatus.LOGGEDOUT);
+      expect(await nordvpn.getUserStatus()).to.equal(userStatuses.LOGGEDOUT);
 
       const result = await nordvpn.login({ username, password });
 
       expect(result).to.be.true;
-      expect(await nordvpn.getUserStatus()).to.equal(userStatus.LOGGEDIN);
+      expect(await nordvpn.getUserStatus()).to.equal(userStatuses.LOGGEDIN);
     });
 
     it('cannot login with incorrect credentials', async function() {
-      expect(await nordvpn.getUserStatus()).to.equal(userStatus.LOGGEDOUT);
+      expect(await nordvpn.getUserStatus()).to.equal(userStatuses.LOGGEDOUT);
 
       const result = await nordvpn.login({ username: 'not_username', password: password + password });
 
       expect(result).to.be.false;
-      expect(await nordvpn.getUserStatus()).to.equal(userStatus.LOGGEDOUT);
+      expect(await nordvpn.getUserStatus()).to.equal(userStatuses.LOGGEDOUT);
     });
   });
 
@@ -68,7 +69,7 @@ describe('NordVPN', function() {
 
       const status = await nordvpn.getConnectionStatus();
       expect(result).to.be.true;
-      expect(status).to.equal(connectionStatus.CONNECTED);
+      expect(status).to.equal(connectionStatuses.CONNECTED);
     });
 
     it('can connect with city', async function() {
@@ -78,7 +79,7 @@ describe('NordVPN', function() {
 
       const status = await nordvpn.getConnectionStatus();
       expect(result).to.be.true;
-      expect(status).to.equal(connectionStatus.CONNECTED);
+      expect(status).to.equal(connectionStatuses.CONNECTED);
     });
 
     it('can connect with country code', async function() {
@@ -88,7 +89,7 @@ describe('NordVPN', function() {
 
       const status = await nordvpn.getConnectionStatus();
       expect(result).to.be.true;
-      expect(status).to.equal(connectionStatus.CONNECTED);
+      expect(status).to.equal(connectionStatuses.CONNECTED);
     });
 
     it('cannot connect with incorrect city', async function() {
@@ -98,7 +99,7 @@ describe('NordVPN', function() {
 
       const status = await nordvpn.getConnectionStatus();
       expect(result).to.be.false;
-      expect(status).to.equal(connectionStatus.DISCONNECTED);
+      expect(status).to.equal(connectionStatuses.DISCONNECTED);
     });
   });
 
@@ -128,5 +129,16 @@ describe('NordVPN', function() {
         });
       });
     });
+  });
+
+  it('returns UNKNOWN when not installed', async function() {
+    const wrapper = new RealWrapper('not_a_real_command');
+    const nordvpn = new NordVpn({ wrapper });
+
+    const connectionStatus = await nordvpn.getConnectionStatus();
+    const userStatus = await nordvpn.getUserStatus();
+
+    expect(connectionStatus).to.equal(connectionStatuses.UNKNOWN);
+    expect(userStatus).to.equal(userStatuses.UNKNOWN);
   });
 });

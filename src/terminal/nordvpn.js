@@ -105,10 +105,7 @@ export default class {
       .split('\n')
       .filter(it => it.startsWith('Status:'));
     if (candidateStatusLines.length !== 1) {
-      throw new Error({
-        message: 'Could not determine status from response ' + terminalResponse,
-        terminalResponse
-      });
+      return connectionStatuses.UNKNOWN;
     }
     const statusLine = candidateStatusLines[0];
     switch (statusLine.substring('Status:'.length).trim().toLowerCase()) {
