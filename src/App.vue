@@ -1,14 +1,14 @@
 <template>
   <div id="app">
     <Status :status="status" />
-    <Map />
+    <Connector :status="status" />
   </div>
 </template>
 
 <script>
 import { ipcRenderer } from 'electron';
 import Status from './components/Status.vue';
-import Map from './components/Map.vue';
+import Connector from './components/Connector.vue';
 import StatusPoller from './foreground/status.poller';
 import Waiter from './util/waiter';
 import statuses from './enum/status';
@@ -21,7 +21,7 @@ export default {
   name: 'App',
   components: {
     Status,
-    Map
+    Connector
   },
   data() {
     return {
@@ -38,14 +38,3 @@ export default {
   }
 };
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>

@@ -30,7 +30,8 @@ module.exports = {
       SwitchCase: 1
     } ],
     semi: [ 2, 'always' ],
-    'space-before-function-paren': 0
+    'space-before-function-paren': 0,
+    'vue/max-attributes-per-line': 'off'
   },
   overrides: [ {
     files: [ '*.test.js' ],
