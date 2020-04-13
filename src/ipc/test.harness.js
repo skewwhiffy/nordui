@@ -3,25 +3,25 @@
 export default class {
   constructor() {
     const self = this;
-    this.registrations = {};
+    this.mainRegistrations = {};
+    this.rendererRegistrations = {};
     this.ipcMain = {
       on(key, func) {
-        self.register(key, func);
+        self.mainRegistrations[key] = func;
       }
     };
     this.ipcRenderer = {
       send(key, argument) {
-        self.call(key, argument);
+        self.mainRegistrations[key](self.event, argument);
+      },
+      on(key, func) {
+        self.rendererRegistrations[key] = func;
       }
     };
-    this.event = {};
-  }
-
-  register(key, func) {
-    this.registrations[key] = func;
-  }
-
-  call(key, arg) {
-    this.registrations[key](this.event, arg);
+    this.event = {
+      reply(key, argument) {
+        self.rendererRegistrations[key](this, argument);
+      }
+    };
   }
 }
