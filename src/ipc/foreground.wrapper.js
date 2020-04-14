@@ -1,8 +1,9 @@
 'use strict';
 
 export default class {
-  constructor({ ipcRenderer }) {
+  constructor({ ipcRenderer, logger }) {
     this.ipcRenderer = ipcRenderer;
+    this.logger = logger;
     this.resolveCache = {};
     this.cache = {};
   }
@@ -15,17 +16,16 @@ export default class {
         const callKey = [ prefix, key, 'call' ].join('_');
         const responseKey = [ prefix, key, 'response' ].join('_'); // TODO: Commonize with background.wrapper.js
         cached[key] = arg => {
-          console.log('About to ipcRenderer.send with', callKey, arg);
+          this.logger.info('About to ipcRenderer.send with', callKey, arg);
           const promise = new Promise(resolve => {
-            console.log('Setting resolve cache on key', key);
+            this.logger.info('Setting resolve cache on key', key);
             this.resolveCache[key] = resolve;
           });
           this.ipcRenderer.send(callKey, arg); // TODO: Incorporate request ID
           return promise;
         };
         this.ipcRenderer.on(responseKey, (event, arg) => {
-          console.log('Resolving on key', key);
-          console.log('Inside call back, arg:', arg);
+          this.logger.info('Resolving on key', key);
           this.resolveCache[key](arg);
         });
       });

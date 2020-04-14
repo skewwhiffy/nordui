@@ -1,21 +1,19 @@
 'use strict';
 
 export default class {
-  constructor() {
+  constructor({ logger }) {
     const self = this;
     this.mainRegistrations = {};
     this.rendererRegistrations = {};
     this.ipcMain = {
       on(key, func) {
-        console.log('Registering ipcMain with', key);
-        console.log('Func', func.toString());
+        logger.info('Registering ipcMain with', key);
         self.mainRegistrations[key] = func;
       }
     };
     this.ipcRenderer = {
       send(key, argument) {
-        console.log('Inside ipcRenderer.send with', key, argument);
-        console.log(self.mainRegistrations[key].toString());
+        logger.info('ipcRenderer.send with', key, argument);
         self.mainRegistrations[key](self.event, argument);
       },
       on(key, func) {
@@ -24,7 +22,7 @@ export default class {
     };
     this.event = {
       reply(key, argument) {
-        console.log('Inside event.reply');
+        logger.info('event.reply');
         self.rendererRegistrations[key](this, argument);
       }
     };

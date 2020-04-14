@@ -1,10 +1,9 @@
 'use strict';
-import Terminal from './terminal';
 
 export default class {
-  constructor(command) {
+  constructor({ command, terminal }) {
     this.command = command;
-    this.terminal = new Terminal();
+    this.terminal = terminal;
   }
 
   async execute(...args) {

@@ -2,8 +2,10 @@
 import userStatuses from '../enum/user.status';
 import connectionStatuses from '../enum/connection.status';
 import NordVpn from './nordvpn';
+import Terminal from './terminal';
 import RealWrapper from './command.wrapper';
 import Wrapper from './dummy.nord.vpn';
+import DummyLogger from '../log/dummy.logger';
 import { expect } from 'chai';
 
 const { username, password } = Wrapper;
@@ -132,7 +134,10 @@ describe('NordVPN', function() {
   });
 
   it('returns UNKNOWN when not installed', async function() {
-    const wrapper = new RealWrapper('not_a_real_command');
+    const logger = new DummyLogger();
+    const terminal = new Terminal({ logger });
+    const command = 'not_a_real_command';
+    const wrapper = new RealWrapper({ command, terminal });
     const nordvpn = new NordVpn({ wrapper });
 
     const connectionStatus = await nordvpn.getConnectionStatus();

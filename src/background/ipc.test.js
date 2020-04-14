@@ -1,5 +1,7 @@
 'use strict';
 import Ipc from './ipc';
+import Terminal from '../terminal/terminal';
+import Logger from '../log/dummy.logger';
 import { expect } from 'chai';
 
 describe('Ipc setup', function() {
@@ -21,7 +23,9 @@ describe('Ipc setup', function() {
         return 'statusIpcCalled';
       }
     };
-    const ipc = new Ipc({ ipcMain });
+    const logger = new Logger();
+    const terminal = new Terminal({ logger });
+    const ipc = new Ipc({ ipcMain, terminal });
     ipc.statusIpc = statusIpc;
 
     ipc.setup();

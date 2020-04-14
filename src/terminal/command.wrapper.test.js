@@ -1,10 +1,20 @@
 'use strict';
 import Wrapper from './command.wrapper';
+import Terminal from './terminal';
+import Logger from '../log/dummy.logger';
 import { expect } from 'chai';
 
 describe('Command wrapper', function() {
+  let terminal;
+
+  beforeEach(function() {
+    const logger = new Logger();
+    terminal = new Terminal({ logger });
+  });
+
   it('executes command without arguments', async function() {
-    const wrapper = new Wrapper('pwd');
+    const command = 'pwd';
+    const wrapper = new Wrapper({ command, terminal });
 
     const response = await wrapper.execute();
 
@@ -12,7 +22,8 @@ describe('Command wrapper', function() {
   });
 
   it('executes command with arguments', async function() {
-    const wrapper = new Wrapper('ls');
+    const command = 'ls';
+    const wrapper = new Wrapper({ command, terminal });
 
     const response = await wrapper.execute('-al');
 

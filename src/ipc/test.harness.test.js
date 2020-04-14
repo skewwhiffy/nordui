@@ -1,13 +1,16 @@
 'use strict';
 import TestHarness from './test.harness';
+import DummyLogger from '../log/dummy.logger';
 import { expect } from 'chai';
 
 describe('IPC test harness', function() {
+  let logger;
   let harness;
   let argument = 0;
 
   beforeEach(function() {
-    harness = new TestHarness();
+    logger = new DummyLogger();
+    harness = new TestHarness({ logger });
     argument++;
   });
 

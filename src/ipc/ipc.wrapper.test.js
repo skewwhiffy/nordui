@@ -2,19 +2,22 @@
 import BackgroundWrapper from './background.wrapper';
 import ForegroundWrapper from './foreground.wrapper';
 import TestHarness from './test.harness';
+import DummyLogger from '../log/dummy.logger';
 import { expect } from 'chai';
 
-describe.only('IPC wrapper', function() {
+describe('IPC wrapper', function() {
   it('sets up ipcMain for sync function', async function() {
-    const harness = new TestHarness();
+    const logger = new DummyLogger();
+    const harness = new TestHarness({ logger });
     const raw = {
       hello(arg) {
         return 'hello ' + arg;
       }
     };
     const prefix = 'sync';
-    const backgroundWrapper = new BackgroundWrapper({ ipcMain: harness.ipcMain });
-    const foregroundWrapper = new ForegroundWrapper({ ipcRenderer: harness.ipcRenderer });
+    const { ipcMain, ipcRenderer } = harness;
+    const backgroundWrapper = new BackgroundWrapper({ ipcMain, logger });
+    const foregroundWrapper = new ForegroundWrapper({ ipcRenderer, logger });
 
     [ backgroundWrapper, foregroundWrapper ].forEach(it => it.wrap({ prefix, raw }));
     const result = await foregroundWrapper.get(prefix).hello('world');

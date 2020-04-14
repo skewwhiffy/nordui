@@ -5,6 +5,8 @@ import {
   installVueDevtools
 } from 'vue-cli-plugin-electron-builder/lib';
 import IpcSetup from './background/ipc';
+import Terminal from './terminal/terminal';
+import Logger from './log/logger';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -71,7 +73,9 @@ app.on('ready', async() => {
   createWindow();
 });
 
-const ipcSetup = new IpcSetup({ ipcMain });
+const logger = new Logger();
+const terminal = new Terminal({ logger });
+const ipcSetup = new IpcSetup({ ipcMain, terminal });
 ipcSetup.setup();
 
 // Exit cleanly on request from parent process in development mode.

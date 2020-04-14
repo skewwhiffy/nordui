@@ -6,13 +6,14 @@ import StatusIpc from './status.ipc';
 let singleton;
 
 export default class {
-  constructor({ ipcMain }) {
+  constructor({ ipcMain, terminal }) {
     if (singleton) {
       return singleton;
     }
     singleton = this;
     this.ipcMain = ipcMain;
-    const wrapper = new Wrapper('nordvpn');
+    const command = 'nordvpn';
+    const wrapper = new Wrapper({ command, terminal });
     this.nordVpn = new NordVpn({ wrapper });
     this.statusIpc = new StatusIpc(this);
   }
