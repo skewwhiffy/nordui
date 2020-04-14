@@ -21,9 +21,10 @@ export default class {
       }
     };
     this.event = {
-      reply(key, argument) {
-        logger.info('event.reply');
-        self.rendererRegistrations[key](this, argument);
+      async reply(key, argument) {
+        const result = await Promise.resolve(argument);
+        logger.info('event.reply', key, result);
+        self.rendererRegistrations[key](this, result);
       }
     };
   }

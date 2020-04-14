@@ -1,7 +1,7 @@
 <template>
   <div class="status">
     <h1>Status</h1>
-    <p>here: {{ status }}</p>
+    <p>{{ status }}</p>
   </div>
 </template>
 
