@@ -2,8 +2,7 @@
 import BackgroundWrapper from './background.wrapper';
 import ForegroundWrapper from './foreground.wrapper';
 import TestHarness from './test.harness';
-import DummyLogger from '../log/logger';
-// import DummyLogger from '../log/dummy.logger';
+import DummyLogger from '../log/dummy.logger';
 import { expect } from 'chai';
 
 describe('IPC wrapper', function() {
